@@ -102,7 +102,7 @@ const Results = () => {
     const bonusGames = games.slice(3, 6);
     
     let content = `Power Lotto AI - Generated Numbers\n`;
-    content += `PowerBall USA\n`;
+    content += `PowerLotto AI\n`;
     content += `${selectedDay} - ${formattedDate}\n\n`;
     
     content += `MAIN GAMES:\n`;
@@ -146,12 +146,12 @@ const Results = () => {
       {/* Header */}
       <header className="bg-charcoal dark:bg-charcoal border-b border-border/50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <Logo size="sm" />
-            <p className="text-xs text-red-cta font-semibold">
-              PowerBall USA
-            </p>
-          </div>
+            <div>
+              <Logo size="sm" />
+              <p className="text-xs text-red-cta font-semibold">
+                PowerLotto AI
+              </p>
+            </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-white/70 hidden sm:inline">{email}</span>
             <Button

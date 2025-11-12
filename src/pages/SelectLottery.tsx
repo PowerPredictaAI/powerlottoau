@@ -240,7 +240,7 @@ const SelectLottery = () => {
       <div className="max-w-4xl mx-auto px-6 py-6 sm:py-12">
         <div className="text-center mb-6 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl font-display font-bold mb-2">
-            PowerBall USA
+            PowerLotto AI
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground px-4">
             Generate AI-powered numbers for PowerBall

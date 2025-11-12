@@ -103,7 +103,7 @@ const SelectDay = () => {
             <div>
               <Logo size="sm" />
               <p className="text-xs text-red-cta font-semibold">
-                PowerBall USA
+                PowerLotto AI
               </p>
             </div>
             <div className="flex items-center gap-4">
