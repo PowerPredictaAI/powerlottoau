@@ -269,10 +269,23 @@ export function calculateGameScore(
   };
 }
 
+// Normalize score to range 70-92.3
+export function normalizeScore(rawScore: number): number {
+  // Clamp raw score to 0-100
+  const clampedScore = Math.max(0, Math.min(100, rawScore));
+  
+  // Map 0-100 to 70-92.3
+  const minScore = 70;
+  const maxScore = 92.3;
+  const normalizedScore = minScore + (clampedScore / 100) * (maxScore - minScore);
+  
+  return normalizedScore;
+}
+
 export function getScoreRating(score: number): { label: string, color: string } {
-  if (score >= 80) return { label: "EXCELLENT", color: "text-green-success" };
-  if (score >= 65) return { label: "VERY GOOD", color: "text-primary-blue" };
-  if (score >= 50) return { label: "GOOD", color: "text-gold-ai" };
-  if (score >= 35) return { label: "AVERAGE", color: "text-muted-foreground" };
+  if (score >= 88) return { label: "EXCELLENT", color: "text-green-success" };
+  if (score >= 82) return { label: "VERY GOOD", color: "text-primary-blue" };
+  if (score >= 77) return { label: "GOOD", color: "text-gold-ai" };
+  if (score >= 73) return { label: "AVERAGE", color: "text-muted-foreground" };
   return { label: "BELOW AVERAGE", color: "text-red-cta" };
 }

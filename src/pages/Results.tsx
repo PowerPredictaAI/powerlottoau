@@ -6,7 +6,7 @@ import { ArrowLeft, LogOut, Sparkles, Star, Download, Copy } from "lucide-react"
 import Logo from "@/components/Logo";
 import bgImage from "@/assets/powerball-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
-import { parsePowerBallDatabase, calculateFrequencies, calculateGameScore, getScoreRating, type GameWithScore } from "@/utils/powerballScoring";
+import { parsePowerBallDatabase, calculateFrequencies, calculateGameScore, getScoreRating, normalizeScore, type GameWithScore } from "@/utils/powerballScoring";
 
 const Results = () => {
   const navigate = useNavigate();
@@ -45,13 +45,39 @@ const Results = () => {
           calculateGameScore(game, mainFreq, powerballFreq, pairFreq, records)
         );
         
-        // Sort by score (highest first)
-        gamesWithScores.sort((a, b) => b.score - a.score);
+        // Normalize scores to 70-92.3 range
+        const normalizedGames = gamesWithScores.map(game => ({
+          ...game,
+          score: normalizeScore(game.score)
+        }));
         
-        setGames(gamesWithScores);
+        // Sort by score (highest first)
+        normalizedGames.sort((a, b) => b.score - a.score);
+        
+        // Ensure one of the bonus games (index 3-5) has the highest score
+        const highestScore = normalizedGames[0].score;
+        const bonusGamesStartIndex = 3;
+        
+        // Check if any bonus game already has the highest score
+        const hasBonusWithHighest = normalizedGames
+          .slice(bonusGamesStartIndex)
+          .some(game => game.score === highestScore);
+        
+        if (!hasBonusWithHighest) {
+          // Move the highest scoring game to the first bonus game position
+          const highestGame = normalizedGames.shift()!;
+          
+          // Add a small bonus to make it slightly higher
+          highestGame.score = Math.min(92.3, highestGame.score + 0.5);
+          
+          // Insert at position 3 (first bonus game)
+          normalizedGames.splice(bonusGamesStartIndex, 0, highestGame);
+        }
+        
+        setGames(normalizedGames);
       } catch (error) {
         console.error("Error calculating scores:", error);
-        setGames(generatedGames.map(g => ({ ...g, score: 50 })));
+        setGames(generatedGames.map(g => ({ ...g, score: normalizeScore(50) })));
       }
       
       setIsLoadingScores(false);
