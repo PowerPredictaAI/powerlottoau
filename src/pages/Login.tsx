@@ -61,7 +61,7 @@ const Login = () => {
           <div className="text-center mb-6 sm:mb-8">
             <Logo size="lg" className="mb-4 sm:mb-6" />
             <p className="text-muted-foreground text-base sm:text-lg font-ui px-4">
-              Smart EuroMillions Number Analytics
+              Smart PowerBall Number Analytics
             </p>
           </div>
 

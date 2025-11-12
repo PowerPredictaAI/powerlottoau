@@ -158,17 +158,17 @@ const Database = () => {
   const saveNumbers = () => {
     if (!generatedNumbers) return;
 
-    const content = `EURO LOTTO AI - Números Gerados\n` +
-      `Baseado em: ${filteredRecords.length} sorteios\n` +
-      `Data: ${new Date().toLocaleDateString('pt-BR')}\n\n` +
-      `Números Principais: ${generatedNumbers.mainNumbers.join(", ")}\n` +
-      `Lucky Stars: ${generatedNumbers.luckyStars.join(", ")}\n`;
+    const content = `Power Lotto AI - Generated Numbers\n` +
+      `Based on: ${filteredRecords.length} draws\n` +
+      `Date: ${new Date().toLocaleDateString('en-US')}\n\n` +
+      `Main Numbers: ${generatedNumbers.mainNumbers.join(", ")}\n` +
+      `PowerBall: ${generatedNumbers.luckyStars.join(", ")}\n`;
 
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `eurolotto-ai-numbers-${Date.now()}.txt`;
+    link.download = `powerlotto-ai-numbers-${Date.now()}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -190,7 +190,7 @@ const Database = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "euromillions-history.csv");
+    link.setAttribute("download", "powerball-history.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -234,7 +234,7 @@ const Database = () => {
               <DatabaseIcon className="h-6 w-6 sm:h-8 sm:w-8 text-primary-blue" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-display font-bold">EuroMillions Draw History</h1>
+              <h1 className="text-2xl sm:text-3xl font-display font-bold">PowerBall Draw History</h1>
               <p className="text-sm text-muted-foreground">Complete historical database of all draws</p>
             </div>
           </div>
@@ -318,12 +318,12 @@ const Database = () => {
               </div>
               
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Lucky Stars</p>
+                <p className="text-sm text-muted-foreground mb-2">PowerBall</p>
                 <div className="flex gap-2">
                   {generatedNumbers.luckyStars.map((star, idx) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold-ai text-charcoal font-bold text-lg shadow-lg"
+                      className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-cta text-white font-bold text-lg shadow-lg"
                     >
                       {star}
                     </span>
@@ -398,8 +398,8 @@ const Database = () => {
                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Draw #</TableHead>
                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Date</TableHead>
                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Main Numbers</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Lucky Stars</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm text-right px-2 sm:px-4 py-2 sm:py-3">Jackpot (€)</TableHead>
+                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">PowerBall</TableHead>
+                    <TableHead className="font-bold text-xs sm:text-sm text-right px-2 sm:px-4 py-2 sm:py-3">Jackpot ($)</TableHead>
                     <TableHead className="font-bold text-xs sm:text-sm text-center px-2 sm:px-4 py-2 sm:py-3">Winners</TableHead>
                   </TableRow>
                 </TableHeader>

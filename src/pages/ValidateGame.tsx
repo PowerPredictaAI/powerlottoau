@@ -9,19 +9,17 @@ import bgImage from "@/assets/lottery-bg.png";
 const ValidateGame = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [lottery, setLottery] = useState<"euromillions" | "uklotto">("euromillions");
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
-  const [selectedStars, setSelectedStars] = useState<number[]>([]);
+  const [selectedPowerBall, setSelectedPowerBall] = useState<number | null>(null);
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
-    const selectedLottery = localStorage.getItem("selectedLottery") as "euromillions" | "uklotto";
+    const selectedLottery = localStorage.getItem("selectedLottery");
     
     if (!userEmail || !selectedLottery) {
       navigate("/");
     } else {
       setEmail(userEmail);
-      setLottery(selectedLottery);
     }
   }, [navigate]);
 
@@ -38,44 +36,25 @@ const ValidateGame = () => {
     if (selectedNumbers.includes(num)) {
       setSelectedNumbers(selectedNumbers.filter(n => n !== num));
     } else {
-      const maxNumbers = lottery === "euromillions" ? 5 : 6;
-      if (selectedNumbers.length < maxNumbers) {
+      if (selectedNumbers.length < 5) {
         setSelectedNumbers([...selectedNumbers, num].sort((a, b) => a - b));
       }
     }
   };
 
-  const handleStarClick = (num: number) => {
-    if (selectedStars.includes(num)) {
-      setSelectedStars(selectedStars.filter(n => n !== num));
-    } else {
-      if (selectedStars.length < 2) {
-        setSelectedStars([...selectedStars, num].sort((a, b) => a - b));
-      }
-    }
+  const handlePowerBallClick = (num: number) => {
+    setSelectedPowerBall(selectedPowerBall === num ? null : num);
   };
 
   const handleAnalyze = () => {
-    if (lottery === "euromillions") {
-      if (selectedNumbers.length === 5 && selectedStars.length === 2) {
-        localStorage.setItem("validationNumbers", JSON.stringify(selectedNumbers));
-        localStorage.setItem("validationStars", JSON.stringify(selectedStars));
-        navigate("/validate-results");
-      }
-    } else {
-      if (selectedNumbers.length === 6) {
-        localStorage.setItem("validationNumbers", JSON.stringify(selectedNumbers));
-        navigate("/validate-results");
-      }
+    if (selectedNumbers.length === 5 && selectedPowerBall !== null) {
+      localStorage.setItem("validationNumbers", JSON.stringify(selectedNumbers));
+      localStorage.setItem("validationPowerBall", selectedPowerBall.toString());
+      navigate("/validate-results");
     }
   };
 
-  const isAnalyzeEnabled = lottery === "euromillions" 
-    ? selectedNumbers.length === 5 && selectedStars.length === 2
-    : selectedNumbers.length === 6;
-
-  const maxNumbers = lottery === "euromillions" ? 5 : 6;
-  const maxMainNumber = lottery === "euromillions" ? 50 : 59;
+  const isAnalyzeEnabled = selectedNumbers.length === 5 && selectedPowerBall !== null;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -90,8 +69,8 @@ const ValidateGame = () => {
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div>
               <Logo size="sm" />
-              <p className="text-xs text-primary-blue font-semibold">
-                {lottery === "euromillions" ? "EuroMillions" : "UK National Lottery"}
+              <p className="text-xs text-red-cta font-semibold">
+                PowerBall USA
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -117,7 +96,7 @@ const ValidateGame = () => {
 
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 mb-4">
-              <Sparkles className="h-6 w-6 text-gold-ai" />
+              <Sparkles className="h-6 w-6 text-red-cta" />
               <h1 className="text-3xl font-display font-bold">Validate Your Game</h1>
             </div>
             <p className="text-muted-foreground">
@@ -129,15 +108,15 @@ const ValidateGame = () => {
           <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-6 mb-6">
             <div className="mb-4">
               <h3 className="text-xl font-display font-bold mb-2">
-                Main Numbers ({selectedNumbers.length}/{maxNumbers})
+                Main Numbers ({selectedNumbers.length}/5)
               </h3>
               <p className="text-sm text-muted-foreground">
-                Select {maxNumbers} numbers from 1 to {maxMainNumber}
+                Select 5 numbers from 1 to 69
               </p>
             </div>
 
             <div className="grid grid-cols-7 sm:grid-cols-10 gap-2">
-              {Array.from({ length: maxMainNumber }, (_, i) => i + 1).map((num) => (
+              {Array.from({ length: 69 }, (_, i) => i + 1).map((num) => (
                 <button
                   key={num}
                   onClick={() => handleNumberClick(num)}
@@ -153,38 +132,36 @@ const ValidateGame = () => {
             </div>
           </Card>
 
-          {/* Lucky Stars (EuroMillions only) */}
-          {lottery === "euromillions" && (
-            <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-6 mb-6">
-              <div className="mb-4">
-                <h3 className="text-xl font-display font-bold mb-2">
-                  Lucky Stars ({selectedStars.length}/2)
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Select 2 lucky stars from 1 to 12
-                </p>
-              </div>
+          {/* PowerBall */}
+          <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-6 mb-6">
+            <div className="mb-4">
+              <h3 className="text-xl font-display font-bold mb-2">
+                PowerBall {selectedPowerBall !== null && `(${selectedPowerBall})`}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Select 1 PowerBall from 1 to 26
+              </p>
+            </div>
 
-              <div className="grid grid-cols-6 sm:grid-cols-12 gap-2">
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => handleStarClick(num)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-sm transition-all ${
-                      selectedStars.includes(num)
-                        ? "bg-gradient-to-br from-gold-ai to-gold-ai/70 text-charcoal shadow-glow-gold scale-110"
-                        : "bg-muted hover:bg-muted/80 text-foreground"
-                    }`}
-                  >
-                    {num}
-                  </button>
-                ))}
-              </div>
-            </Card>
-          )}
+            <div className="grid grid-cols-6 sm:grid-cols-13 gap-2">
+              {Array.from({ length: 26 }, (_, i) => i + 1).map((num) => (
+                <button
+                  key={num}
+                  onClick={() => handlePowerBallClick(num)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-sm transition-all ${
+                    selectedPowerBall === num
+                      ? "bg-gradient-to-br from-red-cta to-red-cta/70 text-white shadow-glow-gold scale-110 ring-2 ring-red-cta/30"
+                      : "bg-muted hover:bg-muted/80 text-foreground"
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
+          </Card>
 
           {/* Selected Numbers Preview */}
-          {(selectedNumbers.length > 0 || selectedStars.length > 0) && (
+          {(selectedNumbers.length > 0 || selectedPowerBall !== null) && (
             <Card className="glass-panel dark:glass-panel glass-panel-light border-primary-blue/30 p-6 mb-6">
               <h3 className="text-lg font-display font-bold mb-4">Your Selection</h3>
               <div className="flex items-center justify-center gap-3 flex-wrap">
@@ -197,18 +174,14 @@ const ValidateGame = () => {
                   </div>
                 ))}
 
-                {lottery === "euromillions" && selectedStars.length > 0 && (
-                  <span className="text-2xl text-muted-foreground mx-2">+</span>
+                {selectedPowerBall !== null && (
+                  <>
+                    <span className="text-2xl text-muted-foreground mx-2">+</span>
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
+                      <span className="text-xl font-display font-bold text-white">{selectedPowerBall}</span>
+                    </div>
+                  </>
                 )}
-
-                {selectedStars.map((num, idx) => (
-                  <div
-                    key={`star-${idx}`}
-                    className="w-14 h-14 rounded-full bg-gradient-to-br from-gold-ai to-gold-ai/70 flex items-center justify-center shadow-glow-gold"
-                  >
-                    <span className="text-xl font-display font-bold text-charcoal">{num}</span>
-                  </div>
-                ))}
               </div>
             </Card>
           )}

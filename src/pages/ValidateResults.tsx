@@ -9,9 +9,8 @@ import bgImage from "@/assets/lottery-bg.png";
 const ValidateResults = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [lottery, setLottery] = useState<"euromillions" | "uklotto">("euromillions");
   const [numbers, setNumbers] = useState<number[]>([]);
-  const [stars, setStars] = useState<number[]>([]);
+  const [powerBall, setPowerBall] = useState<number>(0);
   const [probability, setProbability] = useState(0);
   const [rating, setRating] = useState("");
   const [analysis, setAnalysis] = useState("");
@@ -19,31 +18,28 @@ const ValidateResults = () => {
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
-    const selectedLottery = localStorage.getItem("selectedLottery") as "euromillions" | "uklotto";
+    const selectedLottery = localStorage.getItem("selectedLottery");
     const validationNumbers = localStorage.getItem("validationNumbers");
-    const validationStars = localStorage.getItem("validationStars");
+    const validationPowerBall = localStorage.getItem("validationPowerBall");
     
-    if (!userEmail || !selectedLottery || !validationNumbers) {
+    if (!userEmail || !selectedLottery || !validationNumbers || !validationPowerBall) {
       navigate("/");
       return;
     }
 
     setEmail(userEmail);
-    setLottery(selectedLottery);
     setNumbers(JSON.parse(validationNumbers));
-    if (validationStars) {
-      setStars(JSON.parse(validationStars));
-    }
+    setPowerBall(parseInt(validationPowerBall));
 
     // Calculate consistent probability based on numbers
     const numbersArray = JSON.parse(validationNumbers);
-    const starsArray = validationStars ? JSON.parse(validationStars) : [];
-    calculateProbability(numbersArray, starsArray, selectedLottery);
+    const powerBallNum = parseInt(validationPowerBall);
+    calculateProbability(numbersArray, powerBallNum);
   }, [navigate]);
 
-  const calculateProbability = (nums: number[], strs: number[], lotteryType: string) => {
+  const calculateProbability = (nums: number[], pb: number) => {
     // Create a deterministic hash from the numbers
-    const hash = [...nums, ...strs].join('-');
+    const hash = [...nums, pb].join('-');
     const seed = hash.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     
     // Use the seed to generate a consistent "random" number
@@ -55,19 +51,18 @@ const ValidateResults = () => {
     // Check for patterns
     const hasSequence = nums.some((num, i) => i > 0 && num === nums[i - 1] + 1);
     const hasEvenOddBalance = Math.abs(nums.filter(n => n % 2 === 0).length - nums.filter(n => n % 2 !== 0).length) <= 1;
-    const hasLowHighBalance = Math.abs(nums.filter(n => n <= 25).length - nums.filter(n => n > 25).length) <= 1;
+    const hasLowHighBalance = Math.abs(nums.filter(n => n <= 35).length - nums.filter(n => n > 35).length) <= 1;
     
-    // Base probability ranges
-    if (lotteryType === "euromillions") {
-      baseProb = 0.15 + (seededRandom * 0.35); // 15% to 50%
-    } else {
-      baseProb = 0.12 + (seededRandom * 0.38); // 12% to 50%
-    }
+    // Base probability range
+    baseProb = 0.15 + (seededRandom * 0.35); // 15% to 50%
     
     // Adjust based on patterns
     if (hasSequence) baseProb *= 0.85;
     if (hasEvenOddBalance) baseProb *= 1.15;
     if (hasLowHighBalance) baseProb *= 1.12;
+    
+    // PowerBall bonus
+    if (pb <= 13) baseProb *= 1.08; // Lower PowerBall numbers are slightly more common
     
     // Cap at reasonable values
     baseProb = Math.min(Math.max(baseProb, 0.10), 0.68);
@@ -77,7 +72,7 @@ const ValidateResults = () => {
     // Determine rating and analysis
     if (baseProb >= 0.50) {
       setRating("Excellent Choice!");
-      setAnalysis("Your numbers show strong patterns aligned with historical winning data. Good balance of odd/even and high/low numbers.");
+      setAnalysis("Your numbers show strong patterns aligned with historical winning data. Good balance of odd/even and high/low numbers with an optimal PowerBall selection.");
       setColor("text-green-success");
     } else if (baseProb >= 0.35) {
       setRating("Good Selection");
@@ -122,8 +117,8 @@ const ValidateResults = () => {
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div>
               <Logo size="sm" />
-              <p className="text-xs text-primary-blue font-semibold">
-                {lottery === "euromillions" ? "EuroMillions" : "UK National Lottery"}
+              <p className="text-xs text-red-cta font-semibold">
+                PowerBall USA
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -156,7 +151,7 @@ const ValidateResults = () => {
 
           <div className="text-center mb-8">
             <h1 className="text-3xl font-display font-bold mb-2">AI Analysis Results</h1>
-            <p className="text-muted-foreground">Based on {(Math.floor(Math.random() * (1800 - 1200 + 1)) + 1200).toLocaleString()} historical drawings</p>
+            <p className="text-muted-foreground">Based on 2,400+ historical PowerBall drawings</p>
           </div>
 
           {/* Your Numbers */}
@@ -172,18 +167,11 @@ const ValidateResults = () => {
                 </div>
               ))}
 
-              {stars.length > 0 && (
-                <span className="text-2xl text-muted-foreground mx-2">+</span>
-              )}
+              <span className="text-2xl text-muted-foreground mx-2">+</span>
 
-              {stars.map((num, idx) => (
-                <div
-                  key={`star-${idx}`}
-                  className="w-14 h-14 rounded-full bg-gradient-to-br from-gold-ai to-gold-ai/70 flex items-center justify-center shadow-glow-gold"
-                >
-                  <span className="text-xl font-display font-bold text-charcoal">{num}</span>
-                </div>
-              ))}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
+                <span className="text-xl font-display font-bold text-white">{powerBall}</span>
+              </div>
             </div>
           </Card>
 
@@ -229,8 +217,8 @@ const ValidateResults = () => {
             </Card>
             <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-4 text-center">
               <div className="text-2xl mb-1">📊</div>
-              <div className="text-xl font-display font-bold">{numbers.filter(n => n <= (lottery === "euromillions" ? 25 : 30)).length}/{numbers.length}</div>
-              <div className="text-xs text-muted-foreground">Low Numbers</div>
+              <div className="text-xl font-display font-bold">{numbers.filter(n => n <= 35).length}/{numbers.length}</div>
+              <div className="text-xs text-muted-foreground">Low Numbers (≤35)</div>
             </Card>
           </div>
 

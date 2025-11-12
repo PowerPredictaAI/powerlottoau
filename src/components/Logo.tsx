@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import powerLottoLogo from "@/assets/power-lotto-logo.png";
 
 interface LogoProps {
   className?: string;
@@ -7,17 +8,22 @@ interface LogoProps {
 
 const Logo = ({ className, size = "md" }: LogoProps) => {
   const sizeClasses = {
-    sm: "text-xl",
-    md: "text-3xl",
-    lg: "text-5xl",
+    sm: "h-10 w-auto",
+    md: "h-14 w-auto",
+    lg: "h-20 w-auto",
   };
 
   return (
-    <h1 className={cn("font-display font-bold tracking-tight", sizeClasses[size], className)}>
-      <span className="logo-euro">EURO</span>
-      <span className="logo-lotto">LOTTO</span>
-      <span className="logo-ai">AI</span>
-    </h1>
+    <div className={cn("flex items-center gap-2", className)}>
+      <img 
+        src={powerLottoLogo} 
+        alt="Power Lotto AI" 
+        className={cn(sizeClasses[size])}
+      />
+      <span className="font-display font-bold text-foreground text-xl sm:text-2xl">
+        Power Lotto AI
+      </span>
+    </div>
   );
 };
 
