@@ -138,7 +138,7 @@ const Login = () => {
                 <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/10 flex-shrink-0">
                   <Database className="h-4 w-4 sm:h-5 sm:w-5 text-primary-blue" />
                 </div>
-                <span className="dark:text-slate-300 text-slate-700">📂 Access to previous draws database (since 2004)</span>
+                <span className="dark:text-slate-300 text-slate-700">📂 Access to previous draws database (since 2010)</span>
               </div>
             </div>
 

@@ -13,7 +13,7 @@ const Processing = () => {
 
   const steps = [
     "Connecting to secure database...",
-    `Analyzing ${drawingsAnalyzed.toLocaleString()} historical draws from 2004 to present...`,
+    `Analyzing ${drawingsAnalyzed.toLocaleString()} historical draws from 2010 to present...`,
     "Finding confluence patterns between 2009-2025 period...",
     "Detecting micro-repetition sequences in recent draws...",
     "Calculating frequency distributions and probability matrices...",

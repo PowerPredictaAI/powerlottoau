@@ -332,7 +332,7 @@ const Database = () => {
                 </div>
                 <div>
                   <p className="text-xs sm:text-sm font-bold text-primary-blue">Filter by Year</p>
-                  <p className="text-xs text-muted-foreground">Data since Feb 2004</p>
+                  <p className="text-xs text-muted-foreground">Data since 2010</p>
                 </div>
               </div>
               
