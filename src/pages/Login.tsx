@@ -62,12 +62,12 @@ const Login = () => {
             <Logo size="xl" className="mb-0" />
           </div>
 
-          {/* Login Card */}
-          <div className="glass-panel dark:glass-panel glass-panel-light rounded-xl p-5 sm:p-8 shadow-elevated">
-            <h2 className="text-xl sm:text-2xl font-display font-bold mb-2 text-center">
+          {/* Login Card - Glassmorphism Effect */}
+          <div className="backdrop-blur-2xl bg-white/10 dark:bg-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl border border-white/20">
+            <h2 className="text-xl sm:text-2xl font-display font-bold mb-2 text-center text-white">
               Access Exclusive Area
             </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6 text-center px-2">
+            <p className="text-xs sm:text-sm text-white/70 mb-4 sm:mb-6 text-center px-2">
               Enter the email you registered at the time of purchase
             </p>
 
@@ -79,10 +79,10 @@ const Login = () => {
                   value={email}
                   onChange={(e) => handleEmailChange(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && isValidEmail && handleAccess()}
-                  className={`h-12 dark:bg-ink/50 bg-white/50 border-border ${emailError ? "border-red-ai" : ""}`}
+                  className={`h-12 bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder:text-white/50 ${emailError ? "border-red-ai" : ""}`}
                 />
                 {emailError && (
-                  <p className="text-xs text-red-ai mt-1.5 ml-1">{emailError}</p>
+                  <p className="text-xs text-red-300 mt-1.5 ml-1">{emailError}</p>
                 )}
               </div>
 
@@ -97,9 +97,9 @@ const Login = () => {
               </Button>
               
               {/* Tip Note */}
-              <div className="flex items-start gap-2 p-3 rounded-lg bg-gold-ai/5 border border-gold-ai/20">
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-gold-ai/20 backdrop-blur-sm border border-gold-ai/30">
                 <Lightbulb className="h-4 w-4 text-gold-ai flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white/90">
                   <span className="font-semibold text-gold-ai">Tip:</span> Save this link to easily access your account later
                 </p>
               </div>
@@ -108,41 +108,41 @@ const Login = () => {
             {/* Features */}
             <div className="mt-6 sm:mt-8 space-y-2 sm:space-y-3">
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/10 flex-shrink-0">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/20 backdrop-blur-sm flex-shrink-0">
                   <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-gold-ai" />
                 </div>
-                <span className="dark:text-slate-300 text-slate-700">✨ Generate numbers through patterns of 1800+ analyzed games</span>
+                <span className="text-white/90">✨ Generate numbers through patterns of 1800+ analyzed games</span>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/10 flex-shrink-0">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/20 backdrop-blur-sm flex-shrink-0">
                   <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary-blue" />
                 </div>
-                <span className="dark:text-slate-300 text-slate-700">🎯 Smart analysis of number patterns</span>
+                <span className="text-white/90">🎯 Smart analysis of number patterns</span>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/10 flex-shrink-0">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/20 backdrop-blur-sm flex-shrink-0">
                   <BarChart2 className="h-4 w-4 sm:h-5 sm:w-5 text-gold-ai" />
                 </div>
-                <span className="dark:text-slate-300 text-slate-700">📊 Daily updates & insights</span>
+                <span className="text-white/90">📊 Daily updates & insights</span>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-green-success/10 flex-shrink-0">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-green-success/20 backdrop-blur-sm flex-shrink-0">
                   <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-green-success" />
                 </div>
-                <span className="dark:text-slate-300 text-slate-700">⚡ Copy & paste in seconds</span>
+                <span className="text-white/90">⚡ Copy & paste in seconds</span>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/10 flex-shrink-0">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/20 backdrop-blur-sm flex-shrink-0">
                   <Database className="h-4 w-4 sm:h-5 sm:w-5 text-primary-blue" />
                 </div>
-                <span className="dark:text-slate-300 text-slate-700">📂 Access to previous draws database (since 2010)</span>
+                <span className="text-white/90">📂 Access to previous draws database (since 2010)</span>
               </div>
             </div>
 
           </div>
 
           {/* Disclaimer */}
-          <p className="text-xs text-muted-foreground text-center mt-6 px-4">
+          <p className="text-xs text-white/50 text-center mt-6 px-4">
             Independent analytics tool. Not affiliated with The National Lottery. 18+. Educational use only.
           </p>
         </div>
