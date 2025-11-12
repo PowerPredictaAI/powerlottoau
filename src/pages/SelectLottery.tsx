@@ -24,6 +24,7 @@ const SelectLottery = () => {
   const [email, setEmail] = useState("");
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLegalDialogOpen, setIsLegalDialogOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -460,9 +461,61 @@ const SelectLottery = () => {
         </Dialog>
 
         {/* Footer Disclaimer */}
-        <div className="mt-12 text-center text-xs text-muted-foreground max-w-2xl mx-auto">
+        <div className="mt-12 text-center text-xs text-muted-foreground max-w-2xl mx-auto space-y-2">
           <p>Power Lotto AI is an independent analytics tool. We do not sell tickets and are not affiliated with the Multi-State Lottery Association or any official PowerBall organization. 18+. Educational use only. No guarantee of winnings.</p>
+          <button 
+            onClick={() => setIsLegalDialogOpen(true)}
+            className="text-muted-foreground hover:text-foreground underline transition-colors"
+          >
+            Privacy Policy & Legal
+          </button>
         </div>
+
+        {/* Legal Notices Dialog */}
+        <Dialog open={isLegalDialogOpen} onOpenChange={setIsLegalDialogOpen}>
+          <DialogContent className="sm:max-w-[650px] max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Legal Notices & Disclaimers</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 text-sm leading-relaxed">
+              <div>
+                <h4 className="font-semibold mb-1">Independent tool.</h4>
+                <p className="text-muted-foreground">We are not affiliated with, endorsed by or officially connected to any operator, organiser or brand.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-1">Educational/entertainment use.</h4>
+                <p className="text-muted-foreground">The Service provides analysis, organisation and visualisation features. No guarantees of results or outcomes are made or implied.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-1">No ticket sales.</h4>
+                <p className="text-muted-foreground">We do not sell, broker or facilitate purchase of any third-party products or services.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-1">Responsible use.</h4>
+                <p className="text-muted-foreground">You are solely responsible for how you use insights, simulations or records within the Service and for complying with all applicable local laws.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-1">Prohibited conduct.</h4>
+                <p className="text-muted-foreground">Do not misuse the Service (e.g., reverse engineering, scraping, automated spam, unlawful use). We may suspend or terminate accounts that violate these terms.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-1">Payments & refunds.</h4>
+                <p className="text-muted-foreground">Payments are processed by our partners. Any applicable refund/chargeback policies are those presented at checkout by the payment processor.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-1">Liability.</h4>
+                <p className="text-muted-foreground">To the maximum extent permitted by law, the Service is provided "as is" and "as available". We disclaim any warranties of merchantability or fitness for a particular purpose. We are not liable for indirect, incidental, consequential or special damages.</p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
       </div>
     </div>
