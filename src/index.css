@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Euro Lotto AI Brand Colors */
+    --primary-blue: 214 100% 32%;
+    --primary-blue-light: 214 100% 50%;
+    --primary-blue-ring: 214 100% 60%;
+    --red-cta: 351 89% 53%;
+    --green-success: 142 71% 45%;
+    --gold-ai: 45 93% 49%;
+    
+    /* Backgrounds */
+    --charcoal: 220 20% 8%;
+    --ink: 220 25% 10%;
+    --slate: 220 9% 46%;
+    --fog: 210 20% 98%;
+    
+    /* Light mode */
+    --background: 210 20% 98%;
+    --foreground: 220 20% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 8%;
+    --primary: 214 100% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 9% 46%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 15% 93%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 45 93% 49%;
+    --accent-foreground: 220 20% 8%;
+    --destructive: 351 89% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 214 100% 60%;
+    --radius: 0.75rem;
+    
+    /* Custom gradients */
+    --gradient-blue: linear-gradient(135deg, hsl(214 100% 32%) 0%, hsl(260 90% 20%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(45 93% 49%) 0%, hsl(38 92% 50%) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(220 15% 94%) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 6px 24px rgba(0, 0, 0, 0.12);
+    --shadow-elevated: 0 12px 36px rgba(0, 0, 0, 0.18);
+    --shadow-glow-blue: 0 0 24px hsl(214 100% 60% / 0.3);
+    --shadow-glow-gold: 0 0 24px hsl(45 93% 49% / 0.3);
+    
+    /* Typography */
+    --font-display: 'Space Grotesk', 'Poppins', system-ui, sans-serif;
+    --font-ui: 'Inter', system-ui, sans-serif;
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 214 100% 60%;
+  }
+
+  .dark {
+    /* Dark mode */
+    --background: 220 20% 8%;
+    --foreground: 0 0% 100%;
+    --card: 220 25% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 220 25% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 214 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 9% 46%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 224 15% 20%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 45 93% 49%;
+    --accent-foreground: 220 20% 8%;
+    --destructive: 351 89% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 24%;
+    --input: 220 15% 24%;
+    --ring: 214 100% 60%;
+    
+    --gradient-blue: linear-gradient(135deg, hsl(214 100% 50%) 0%, hsl(260 90% 30%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(45 93% 49%) 0%, hsl(38 92% 50%) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 25% 10%) 100%);
+    
+    --shadow-soft: 0 6px 24px rgba(0, 0, 0, 0.3);
+    --shadow-elevated: 0 12px 36px rgba(0, 0, 0, 0.5);
+    --shadow-glow-blue: 0 0 24px hsl(214 100% 60% / 0.4);
+    --shadow-glow-gold: 0 0 24px hsl(45 93% 49% / 0.4);
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 214 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 214 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-ui);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .glass-panel {
+    background: rgba(10, 14, 20, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  .glass-panel-light {
+    background: rgba(249, 250, 251, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  
+  .logo-euro {
+    color: hsl(var(--primary-blue));
+  }
+  
+  .logo-lotto {
+    color: white;
+  }
+  
+  .logo-ai {
+    color: hsl(var(--red-cta));
+  }
+  
+  .ai-number {
+    border: 2px solid hsl(var(--gold-ai));
+    background: linear-gradient(135deg, hsl(45 93% 49% / 0.1) 0%, hsl(38 92% 50% / 0.1) 100%);
+    box-shadow: 0 0 24px hsl(45 93% 49% / 0.3);
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 24px hsl(45 93% 49% / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 32px hsl(45 93% 49% / 0.5);
+    }
+  }
+}

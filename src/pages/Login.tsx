@@ -1,0 +1,157 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Target, BarChart2, Zap, Lightbulb, Database, Sparkles } from "lucide-react";
+import Logo from "@/components/Logo";
+import bgImage from "@/assets/lottery-bg.png";
+import { z } from "zod";
+
+const emailSchema = z.string().email("Please enter the email used at time of purchase");
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const navigate = useNavigate();
+
+  const validateEmail = (value: string) => {
+    try {
+      emailSchema.parse(value);
+      setEmailError("");
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setEmailError(error.errors[0].message);
+      }
+      return false;
+    }
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (value) {
+      validateEmail(value);
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handleAccess = () => {
+    if (email && validateEmail(email)) {
+      localStorage.setItem("userEmail", email);
+      navigate("/select-lottery");
+    }
+  };
+
+  const isValidEmail = email && !emailError;
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
+      {/* White Overlay */}
+      <div className="absolute inset-0 bg-white/90 dark:bg-charcoal/90" />
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md">
+          {/* Logo & Title */}
+          <div className="text-center mb-6 sm:mb-8">
+            <Logo size="lg" className="mb-4 sm:mb-6" />
+            <p className="text-muted-foreground text-base sm:text-lg font-ui px-4">
+              Smart EuroMillions Number Analytics
+            </p>
+          </div>
+
+          {/* Login Card */}
+          <div className="glass-panel dark:glass-panel glass-panel-light rounded-xl p-5 sm:p-8 shadow-elevated">
+            <h2 className="text-xl sm:text-2xl font-display font-bold mb-2 text-center">
+              Access Exclusive Area
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6 text-center px-2">
+              Enter the email you registered at the time of purchase
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <Input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => handleEmailChange(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && isValidEmail && handleAccess()}
+                  className={`h-12 dark:bg-ink/50 bg-white/50 border-border ${emailError ? "border-red-ai" : ""}`}
+                />
+                {emailError && (
+                  <p className="text-xs text-red-ai mt-1.5 ml-1">{emailError}</p>
+                )}
+              </div>
+
+              <Button
+                onClick={handleAccess}
+                disabled={!isValidEmail}
+                variant="cta"
+                className="w-full"
+                size="lg"
+              >
+                ACCESS EXCLUSIVE AREA
+              </Button>
+              
+              {/* Tip Note */}
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-gold-ai/5 border border-gold-ai/20">
+                <Lightbulb className="h-4 w-4 text-gold-ai flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold text-gold-ai">Tip:</span> Save this link to easily access your account later
+                </p>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="mt-6 sm:mt-8 space-y-2 sm:space-y-3">
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/10 flex-shrink-0">
+                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-gold-ai" />
+                </div>
+                <span className="dark:text-slate-300 text-slate-700">✨ Generate numbers through patterns of 1800+ analyzed games</span>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/10 flex-shrink-0">
+                  <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary-blue" />
+                </div>
+                <span className="dark:text-slate-300 text-slate-700">🎯 Smart analysis of number patterns</span>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/10 flex-shrink-0">
+                  <BarChart2 className="h-4 w-4 sm:h-5 sm:w-5 text-gold-ai" />
+                </div>
+                <span className="dark:text-slate-300 text-slate-700">📊 Daily updates & insights</span>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-green-success/10 flex-shrink-0">
+                  <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-green-success" />
+                </div>
+                <span className="dark:text-slate-300 text-slate-700">⚡ Copy & paste in seconds</span>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/10 flex-shrink-0">
+                  <Database className="h-4 w-4 sm:h-5 sm:w-5 text-primary-blue" />
+                </div>
+                <span className="dark:text-slate-300 text-slate-700">📂 Access to previous draws database (since 2004)</span>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Disclaimer */}
+          <p className="text-xs text-muted-foreground text-center mt-6 px-4">
+            Independent analytics tool. Not affiliated with The National Lottery. 18+. Educational use only.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
