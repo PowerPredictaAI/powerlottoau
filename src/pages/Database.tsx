@@ -10,12 +10,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface DrawRecord {
-  no: string;
   date: string;
   numbers: string;
-  stars: string;
-  jackpot: string;
-  wins: string;
+  powerball: string;
+  multiplier: string;
 }
 
 const Database = () => {
@@ -31,25 +29,21 @@ const Database = () => {
   useEffect(() => {
     const loadDatabase = async () => {
       try {
-        const response = await fetch("/database-euromillions.csv");
+        const response = await fetch("/database-powerball.csv");
         const text = await response.text();
         const lines = text.split("\n").slice(1); // Skip header
         
         const parsed = lines
           .filter(line => line.trim())
           .map(line => {
-            // Remove quotes and parse the line
-            const cleanLine = line.replace(/"/g, "").trim();
-            const match = cleanLine.match(/(\d+)\s+(.+?)\s+(\d+\s+\d+\s+\d+\s+\d+\s+\d+)\s+\((\d+\s+\d+)\)\s+([\d,]+)\s+(\d+)/);
-            
-            if (match) {
+            const parts = line.split(',');
+            if (parts.length >= 3) {
+              const nums = parts[1].trim().split(' ');
               return {
-                no: match[1],
-                date: match[2],
-                numbers: match[3],
-                stars: match[4],
-                jackpot: match[5],
-                wins: match[6]
+                date: parts[0],
+                numbers: nums.slice(0, 5).join(' '),
+                powerball: nums[5] || '',
+                multiplier: parts[2]
               };
             }
             return null;
@@ -71,17 +65,14 @@ const Database = () => {
   useEffect(() => {
     let filtered = records;
 
-    // Filtro por busca de texto
     if (searchTerm) {
       filtered = filtered.filter(record => 
         record.date.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.numbers.includes(searchTerm) ||
-        record.stars.includes(searchTerm) ||
-        record.no.includes(searchTerm)
+        record.powerball.includes(searchTerm)
       );
     }
 
-    // Filtro por ano
     if (selectedYear !== "all") {
       filtered = filtered.filter(record => record.date.includes(selectedYear));
     }
@@ -100,31 +91,26 @@ const Database = () => {
   const generateAINumbers = () => {
     if (filteredRecords.length === 0) return;
 
-    // Calcular frequências dos números principais
     const mainNumberFrequency: { [key: number]: number } = {};
-    const starFrequency: { [key: number]: number } = {};
+    const powerballFrequency: { [key: number]: number } = {};
 
     filteredRecords.forEach(record => {
       record.numbers.split(" ").forEach(num => {
         const n = parseInt(num);
         mainNumberFrequency[n] = (mainNumberFrequency[n] || 0) + 1;
       });
-      record.stars.split(" ").forEach(star => {
-        const s = parseInt(star);
-        starFrequency[s] = (starFrequency[s] || 0) + 1;
-      });
+      const pb = parseInt(record.powerball);
+      powerballFrequency[pb] = (powerballFrequency[pb] || 0) + 1;
     });
 
-    // Ordenar números por frequência
     const sortedMainNumbers = Object.entries(mainNumberFrequency)
       .sort((a, b) => b[1] - a[1])
       .map(([num]) => parseInt(num));
 
-    const sortedStars = Object.entries(starFrequency)
+    const sortedPowerballs = Object.entries(powerballFrequency)
       .sort((a, b) => b[1] - a[1])
       .map(([num]) => parseInt(num));
 
-    // Gerar 5 números principais com maior peso para os mais frequentes
     const mainNumbers: number[] = [];
     while (mainNumbers.length < 5) {
       const randomIndex = Math.floor(Math.random() * Math.min(15, sortedMainNumbers.length));
@@ -134,18 +120,10 @@ const Database = () => {
       }
     }
 
-    // Gerar 2 lucky stars com maior peso para os mais frequentes
-    const luckyStars: number[] = [];
-    while (luckyStars.length < 2) {
-      const randomIndex = Math.floor(Math.random() * Math.min(5, sortedStars.length));
-      const star = sortedStars[randomIndex];
-      if (!luckyStars.includes(star)) {
-        luckyStars.push(star);
-      }
-    }
+    const powerballIndex = Math.floor(Math.random() * Math.min(5, sortedPowerballs.length));
+    const luckyStars = [sortedPowerballs[powerballIndex]];
 
     mainNumbers.sort((a, b) => a - b);
-    luckyStars.sort((a, b) => a - b);
 
     setGeneratedNumbers({ mainNumbers, luckyStars });
     
@@ -182,9 +160,9 @@ const Database = () => {
 
   const exportToCSV = () => {
     const csvContent = "data:text/csv;charset=utf-8," 
-      + "No.,Date,Main Numbers,Lucky Stars,Jackpot,Winners\n"
+      + "Draw Date,Winning Numbers,PowerBall,Multiplier\n"
       + filteredRecords.map(r => 
-          `${r.no},${r.date},"${r.numbers}","${r.stars}",${r.jackpot},${r.wins}`
+          `${r.date},${r.numbers},${r.powerball},${r.multiplier}`
         ).join("\n");
     
     const encodedUri = encodeURI(csvContent);
@@ -342,9 +320,9 @@ const Database = () => {
               <p className="text-2xl sm:text-3xl font-bold text-primary-blue">{filteredRecords.length}</p>
             </Card>
             <Card className="glass-panel dark:glass-panel glass-panel-light p-4 sm:p-6">
-              <p className="text-xs sm:text-sm text-muted-foreground mb-1">Jackpot Winners</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-1">Years of Data</p>
               <p className="text-2xl sm:text-3xl font-bold text-green-success">
-                {filteredRecords.filter(r => r.wins !== "0").length}
+                {availableYears.length}
               </p>
             </Card>
             <Card className="glass-panel dark:glass-panel glass-panel-light p-4 sm:p-6 border-2 border-primary-blue/30 bg-gradient-to-br from-primary-blue/5 to-transparent">
@@ -395,18 +373,15 @@ const Database = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">
-                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Draw #</TableHead>
                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Date</TableHead>
                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Main Numbers</TableHead>
                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">PowerBall</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm text-right px-2 sm:px-4 py-2 sm:py-3">Jackpot ($)</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm text-center px-2 sm:px-4 py-2 sm:py-3">Winners</TableHead>
+                    <TableHead className="font-bold text-xs sm:text-sm text-center px-2 sm:px-4 py-2 sm:py-3">Multiplier</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredRecords.map((record) => (
-                    <TableRow key={record.no} className="hover:bg-muted/30">
-                      <TableCell className="font-medium text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">#{record.no}</TableCell>
+                  {filteredRecords.map((record, idx) => (
+                    <TableRow key={idx} className="hover:bg-muted/30">
                       <TableCell className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">{record.date}</TableCell>
                       <TableCell className="px-2 sm:px-4 py-2 sm:py-3">
                         <div className="flex gap-0.5 sm:gap-1 flex-wrap">
@@ -421,29 +396,14 @@ const Database = () => {
                         </div>
                       </TableCell>
                       <TableCell className="px-2 sm:px-4 py-2 sm:py-3">
-                        <div className="flex gap-0.5 sm:gap-1">
-                          {record.stars.split(" ").map((star, idx) => (
-                            <span
-                              key={idx}
-                              className="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gold-ai/10 text-gold-ai font-semibold text-xs sm:text-sm"
-                            >
-                              {star}
-                            </span>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right font-semibold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">
-                        <span className="hidden sm:inline">€{record.jackpot}</span>
-                        <span className="sm:hidden">€{parseFloat(record.jackpot.replace(/,/g, '')).toLocaleString('en', {notation: 'compact'})}</span>
+                        <span className="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-cta/10 text-red-cta font-bold text-xs sm:text-sm">
+                          {record.powerball}
+                        </span>
                       </TableCell>
                       <TableCell className="text-center px-2 sm:px-4 py-2 sm:py-3">
-                        {record.wins === "0" ? (
-                          <span className="text-muted-foreground text-xs sm:text-sm">-</span>
-                        ) : (
-                          <span className="inline-flex items-center justify-center px-2 py-1 rounded-full bg-green-success/10 text-green-success font-semibold text-xs sm:text-sm">
-                            {record.wins}
-                          </span>
-                        )}
+                        <span className="inline-flex items-center px-2 py-1 rounded-full bg-muted text-xs font-semibold">
+                          {record.multiplier}x
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))}
