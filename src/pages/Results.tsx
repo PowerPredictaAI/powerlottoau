@@ -6,11 +6,7 @@ import { ArrowLeft, LogOut, Sparkles, Star, Download, Copy } from "lucide-react"
 import Logo from "@/components/Logo";
 import bgImage from "@/assets/lottery-bg.png";
 import { useToast } from "@/hooks/use-toast";
-
-type NumberSet = {
-  mainNumbers: number[];
-  powerBall: number;
-};
+import { parsePowerBallDatabase, calculateFrequencies, calculateGameScore, getScoreRating, type GameWithScore } from "@/utils/powerballScoring";
 
 const Results = () => {
   const navigate = useNavigate();
@@ -18,10 +14,11 @@ const Results = () => {
   const [email, setEmail] = useState("");
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [games, setGames] = useState<NumberSet[]>([]);
+  const [games, setGames] = useState<GameWithScore[]>([]);
+  const [isLoadingScores, setIsLoadingScores] = useState(true);
 
   useEffect(() => {
-    const initializeGames = () => {
+    const initializeGames = async () => {
       const userEmail = localStorage.getItem("userEmail");
       const selectedLottery = localStorage.getItem("selectedLottery");
       const day = localStorage.getItem("selectedDay");
@@ -38,13 +35,32 @@ const Results = () => {
 
       // Generate 6 PowerBall games
       const generatedGames = Array.from({ length: 6 }, () => generateNumbers());
-      setGames(generatedGames);
+      
+      // Calculate scores based on historical data
+      try {
+        const records = await parsePowerBallDatabase();
+        const { mainFreq, powerballFreq, pairFreq } = calculateFrequencies(records);
+        
+        const gamesWithScores = generatedGames.map(game => 
+          calculateGameScore(game, mainFreq, powerballFreq, pairFreq, records)
+        );
+        
+        // Sort by score (highest first)
+        gamesWithScores.sort((a, b) => b.score - a.score);
+        
+        setGames(gamesWithScores);
+      } catch (error) {
+        console.error("Error calculating scores:", error);
+        setGames(generatedGames.map(g => ({ ...g, score: 50 })));
+      }
+      
+      setIsLoadingScores(false);
     };
 
     initializeGames();
   }, [navigate]);
 
-  const generateNumbers = (): NumberSet => {
+  const generateNumbers = (): { mainNumbers: number[], powerBall: number } => {
     // Generate 5 main numbers (1-69)
     const mainNumbers: number[] = [];
     while (mainNumbers.length < 5) {
@@ -70,8 +86,8 @@ const Results = () => {
     navigate("/select-day");
   };
 
-  const handleCopyGame = (game: NumberSet, index: number) => {
-    const text = `Game ${index + 1}: ${game.mainNumbers.join(", ")} | PowerBall: ${game.powerBall}`;
+  const handleCopyGame = (game: GameWithScore, index: number) => {
+    const text = `Game ${index + 1}: ${game.mainNumbers.join(", ")} | PowerBall: ${game.powerBall}${game.score ? ` | Score: ${game.score.toFixed(1)}` : ''}`;
     
     navigator.clipboard.writeText(text).then(() => {
       toast({
@@ -183,22 +199,35 @@ const Results = () => {
 
         {/* Main Games */}
         <div className="space-y-6 mb-8">
-          {games.slice(0, 3).map((game, index) => (
-            <Card key={index} className="glass-panel dark:glass-panel glass-panel-light border-border p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🎲</span>
-                  <h3 className="text-xl font-display font-bold">GAME {index + 1}</h3>
+          {games.slice(0, 3).map((game, index) => {
+            const scoreData = game.score ? getScoreRating(game.score) : null;
+            
+            return (
+              <Card key={index} className="glass-panel dark:glass-panel glass-panel-light border-border p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🎲</span>
+                    <h3 className="text-xl font-display font-bold">GAME {index + 1}</h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {game.score && !isLoadingScores && (
+                      <div className="text-right">
+                        <div className="text-2xl font-display font-bold">{game.score.toFixed(1)}</div>
+                        <div className={`text-xs font-semibold ${scoreData?.color}`}>
+                          {scoreData?.label}
+                        </div>
+                      </div>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleCopyGame(game, index)}
+                      className="hover:bg-primary-blue/10"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleCopyGame(game, index)}
-                  className="hover:bg-primary-blue/10"
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
 
               <div className="flex items-center justify-center gap-3 flex-wrap">
                 {game.mainNumbers.map((num, idx) => (
@@ -217,7 +246,8 @@ const Results = () => {
                 </div>
               </div>
             </Card>
-          ))}
+            );
+          })}
         </div>
 
         {/* Bonus Games Section */}
@@ -227,22 +257,35 @@ const Results = () => {
             Bonus Games
           </h2>
           <div className="space-y-4">
-            {games.slice(3, 6).map((game, index) => (
-              <Card key={`bonus-${index}`} className="bg-gradient-to-r from-purple-600 to-purple-500 border-purple-400 p-6 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Star className="h-6 w-6 text-white" />
-                    <h3 className="text-xl font-display font-bold text-white">GAME BONUS {index + 1}</h3>
+            {games.slice(3, 6).map((game, index) => {
+              const scoreData = game.score ? getScoreRating(game.score) : null;
+              
+              return (
+                <Card key={`bonus-${index}`} className="bg-gradient-to-r from-purple-600 to-purple-500 border-purple-400 p-6 shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Star className="h-6 w-6 text-white" />
+                      <h3 className="text-xl font-display font-bold text-white">GAME BONUS {index + 1}</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {game.score && !isLoadingScores && (
+                        <div className="text-right">
+                          <div className="text-2xl font-display font-bold text-white">{game.score.toFixed(1)}</div>
+                          <div className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold">
+                            {scoreData?.label}
+                          </div>
+                        </div>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleCopyGame(game, index + 3)}
+                        className="hover:bg-white/10 text-white"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleCopyGame(game, index + 3)}
-                    className="hover:bg-white/10 text-white"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
 
                 <div className="flex items-center justify-center gap-3 flex-wrap">
                   {game.mainNumbers.map((num, idx) => (
@@ -261,12 +304,13 @@ const Results = () => {
                   </div>
                 </div>
               </Card>
-            ))}
-          </div>
+            );
+          })}
         </div>
+      </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+      {/* Statistics */}
+      <div className="grid grid-cols-3 gap-4 mb-8">
           <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-4 text-center">
             <div className="text-3xl mb-1">🎯</div>
             <div className="text-2xl font-display font-bold">78.2%</div>
