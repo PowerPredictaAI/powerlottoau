@@ -1,16 +1,35 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, LogOut, Database, Sparkles } from "lucide-react";
+import { Star, LogOut, Database, Sparkles, Calendar, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import bgImage from "@/assets/lottery-bg.png";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
+interface DrawRecord {
+  date: string;
+  numbers: string;
+  powerball: string;
+  multiplier: string;
+}
 
 const SelectLottery = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedNumbers, setGeneratedNumbers] = useState<{ mainNumbers: number[], powerBall: number } | null>(null);
+  const [mostFrequentNumbers, setMostFrequentNumbers] = useState<{ number: number, count: number }[]>([]);
+  const [mostFrequentPowerBall, setMostFrequentPowerBall] = useState<{ number: number, count: number }[]>([]);
 
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
@@ -31,23 +50,136 @@ const SelectLottery = () => {
     navigate("/select-day");
   };
 
-  const generateRandomNumbers = () => {
-    // Generate PowerBall numbers
-    const mainNumbers: number[] = [];
-    while (mainNumbers.length < 5) {
-      const num = Math.floor(Math.random() * 69) + 1;
-      if (!mainNumbers.includes(num)) {
-        mainNumbers.push(num);
-      }
+  const generateNumbersFromPeriod = async () => {
+    if (!startDate || !endDate) {
+      toast({
+        title: "Select dates",
+        description: "Please select both start and end dates",
+        variant: "destructive",
+      });
+      return;
     }
-    mainNumbers.sort((a, b) => a - b);
-    
-    const powerBall = Math.floor(Math.random() * 26) + 1;
 
-    const content = `Power Lotto AI - Quick Pick Numbers\n` +
+    setIsGenerating(true);
+
+    try {
+      const response = await fetch("/database-powerball.csv");
+      const text = await response.text();
+      const lines = text.split("\n").slice(1);
+      
+      const records: DrawRecord[] = lines
+        .filter(line => line.trim())
+        .map(line => {
+          const parts = line.split(',');
+          if (parts.length >= 3) {
+            const nums = parts[1].trim().split(' ');
+            return {
+              date: parts[0],
+              numbers: nums.slice(0, 5).join(' '),
+              powerball: nums[5] || '',
+              multiplier: parts[2]
+            };
+          }
+          return null;
+        })
+        .filter((record): record is DrawRecord => record !== null);
+
+      // Filter by date range
+      const filteredRecords = records.filter(record => {
+        try {
+          const recordDate = new Date(record.date);
+          return recordDate >= startDate && recordDate <= endDate;
+        } catch (error) {
+          return false;
+        }
+      });
+
+      if (filteredRecords.length === 0) {
+        toast({
+          title: "No draws found",
+          description: "No draws found in the selected period",
+          variant: "destructive",
+        });
+        setIsGenerating(false);
+        return;
+      }
+
+      // Calculate frequency
+      const mainNumberFrequency: { [key: number]: number } = {};
+      const powerballFrequency: { [key: number]: number } = {};
+
+      filteredRecords.forEach(record => {
+        record.numbers.split(" ").forEach(num => {
+          const n = parseInt(num);
+          mainNumberFrequency[n] = (mainNumberFrequency[n] || 0) + 1;
+        });
+        const pb = parseInt(record.powerball);
+        powerballFrequency[pb] = (powerballFrequency[pb] || 0) + 1;
+      });
+
+      // Sort by frequency
+      const sortedMainNumbers = Object.entries(mainNumberFrequency)
+        .sort((a, b) => b[1] - a[1])
+        .map(([num]) => parseInt(num));
+
+      const sortedPowerballs = Object.entries(powerballFrequency)
+        .sort((a, b) => b[1] - a[1])
+        .map(([num]) => parseInt(num));
+
+      // Generate numbers with bias towards most frequent
+      const mainNumbers: number[] = [];
+      while (mainNumbers.length < 5) {
+        const randomIndex = Math.floor(Math.random() * Math.min(15, sortedMainNumbers.length));
+        const num = sortedMainNumbers[randomIndex];
+        if (!mainNumbers.includes(num)) {
+          mainNumbers.push(num);
+        }
+      }
+
+      const powerballIndex = Math.floor(Math.random() * Math.min(5, sortedPowerballs.length));
+      const powerBall = sortedPowerballs[powerballIndex];
+
+      mainNumbers.sort((a, b) => a - b);
+
+      setGeneratedNumbers({ mainNumbers, powerBall });
+
+      // Store most frequent numbers for display
+      const topMainNumbers = Object.entries(mainNumberFrequency)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([num, count]) => ({ number: parseInt(num), count }));
+
+      const topPowerballs = Object.entries(powerballFrequency)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([num, count]) => ({ number: parseInt(num), count }));
+
+      setMostFrequentNumbers(topMainNumbers);
+      setMostFrequentPowerBall(topPowerballs);
+      
+      toast({
+        title: "Numbers generated!",
+        description: `Based on ${filteredRecords.length} draws from ${format(startDate, "MMM yyyy")} to ${format(endDate, "MMM yyyy")}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate numbers",
+        variant: "destructive",
+      });
+    }
+
+    setIsGenerating(false);
+  };
+
+  const saveNumbers = () => {
+    if (!generatedNumbers || !startDate || !endDate) return;
+
+    const content = `Power Lotto AI - AI Generated Numbers\n` +
+      `Period: ${format(startDate, "MM/dd/yyyy")} - ${format(endDate, "MM/dd/yyyy")}\n` +
       `Generated: ${new Date().toLocaleDateString('en-US')}\n\n` +
-      `Main Numbers: ${mainNumbers.join(", ")}\n` +
-      `PowerBall: ${powerBall}\n`;
+      `Main Numbers: ${generatedNumbers.mainNumbers.join(", ")}\n` +
+      `PowerBall: ${generatedNumbers.powerBall}\n`;
 
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -60,8 +192,8 @@ const SelectLottery = () => {
     URL.revokeObjectURL(url);
 
     toast({
-      title: "Numbers generated!",
-      description: "Quick pick numbers saved to file",
+      title: "Numbers saved!",
+      description: "TXT file downloaded successfully",
     });
   };
 
@@ -157,13 +289,175 @@ const SelectLottery = () => {
           
           <Button
             size="lg"
-            onClick={generateRandomNumbers}
+            onClick={() => setIsDialogOpen(true)}
             className="gap-2 min-w-[240px] sm:min-w-[280px] text-sm sm:text-base bg-gradient-to-r from-primary-blue via-primary-blue/90 to-primary-blue text-white font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-primary-blue/20"
           >
             <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
-            Generate Quick Pick
+            Generate by Filter
           </Button>
         </div>
+
+        {/* AI Generator Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary-blue" />
+                Generate AI Numbers by Period
+              </DialogTitle>
+              <DialogDescription>
+                Select a date range to analyze draws and generate optimized numbers
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Date Pickers */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Start Date</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !startDate && "text-muted-foreground"
+                        )}
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {startDate ? format(startDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={startDate}
+                        onSelect={setStartDate}
+                        disabled={(date) => date > new Date() || date < new Date("2010-01-01")}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">End Date</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !endDate && "text-muted-foreground"
+                        )}
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {endDate ? format(endDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={endDate}
+                        onSelect={setEndDate}
+                        disabled={(date) => date > new Date() || date < new Date("2010-01-01") || (startDate ? date < startDate : false)}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              {/* Generated Numbers Display */}
+              {generatedNumbers && (
+                <Card className="glass-panel dark:glass-panel glass-panel-light p-4 border-2 border-primary-blue/20 bg-gradient-to-br from-primary-blue/5 to-transparent">
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">Main Numbers</p>
+                      <div className="flex gap-2 flex-wrap">
+                        {generatedNumbers.mainNumbers.map((num, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-blue text-white font-bold shadow-lg"
+                          >
+                            {num}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">PowerBall</p>
+                      <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-cta text-white font-bold shadow-lg">
+                        {generatedNumbers.powerBall}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              {/* Most Frequent Numbers */}
+              {mostFrequentNumbers.length > 0 && (
+                <Card className="glass-panel dark:glass-panel glass-panel-light p-4 border border-muted">
+                  <h4 className="font-semibold text-sm mb-3">Most Repeated Numbers in Period</h4>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Main Numbers (Top 10)</p>
+                      <div className="flex gap-1.5 flex-wrap">
+                        {mostFrequentNumbers.map((item, idx) => (
+                          <div key={idx} className="flex flex-col items-center">
+                            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary-blue/10 text-primary-blue font-bold text-sm border border-primary-blue/30">
+                              {item.number}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground mt-0.5">{item.count}x</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">PowerBall (Top 6)</p>
+                      <div className="flex gap-1.5 flex-wrap">
+                        {mostFrequentPowerBall.map((item, idx) => (
+                          <div key={idx} className="flex flex-col items-center">
+                            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-cta/10 text-red-cta font-bold text-sm border border-red-cta/30">
+                              {item.number}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground mt-0.5">{item.count}x</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              )}
+            </div>
+
+            <DialogFooter className="gap-2">
+              {generatedNumbers && (
+                <Button
+                  onClick={saveNumbers}
+                  variant="outline"
+                  className="gap-2 border-primary-blue/30 hover:bg-primary-blue/10"
+                >
+                  <Save className="h-4 w-4" />
+                  Save Numbers
+                </Button>
+              )}
+              <Button
+                onClick={generateNumbersFromPeriod}
+                disabled={!startDate || !endDate || isGenerating}
+                className="gap-2 bg-gradient-to-r from-primary-blue to-primary-blue/80"
+              >
+                <Sparkles className="h-4 w-4" />
+                {isGenerating ? "Generating..." : "Generate Numbers"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Footer Disclaimer */}
         <div className="mt-12 text-center text-xs text-muted-foreground max-w-2xl mx-auto">
