@@ -45,39 +45,65 @@ const Results = () => {
           calculateGameScore(game, mainFreq, powerballFreq, pairFreq, records)
         );
         
-        // Normalize scores to 70-92.3 range
-        const normalizedGames = gamesWithScores.map(game => ({
-          ...game,
-          score: normalizeScore(game.score)
-        }));
+        // Sort by raw score
+        gamesWithScores.sort((a, b) => b.score - a.score);
         
-        // Sort by score (highest first)
-        normalizedGames.sort((a, b) => b.score - a.score);
+        // Create a varied distribution: 70-92.3
+        // Target distribution: 1 EXCELLENT (88-92.3), 1-2 VERY GOOD (82-88), 2 GOOD (77-82), 1-2 AVERAGE (73-77), 0-1 BELOW AVERAGE (70-73)
+        const targetScores = [
+          91.5,  // EXCELLENT
+          86.5,  // VERY GOOD
+          83.0,  // VERY GOOD
+          79.5,  // GOOD
+          76.0,  // GOOD
+          72.5   // AVERAGE
+        ];
         
-        // Ensure one of the bonus games (index 3-5) has the highest score
-        const highestScore = normalizedGames[0].score;
-        const bonusGamesStartIndex = 3;
-        
-        // Check if any bonus game already has the highest score
-        const hasBonusWithHighest = normalizedGames
-          .slice(bonusGamesStartIndex)
-          .some(game => game.score === highestScore);
-        
-        if (!hasBonusWithHighest) {
-          // Move the highest scoring game to the first bonus game position
-          const highestGame = normalizedGames.shift()!;
+        // Apply target scores based on the original ranking
+        const distributedGames = gamesWithScores.map((game, index) => {
+          // Add some randomness to make it more natural
+          const baseScore = targetScores[index];
+          const randomVariation = (Math.random() - 0.5) * 2; // -1 to +1
+          const finalScore = Math.max(70, Math.min(92.3, baseScore + randomVariation));
           
-          // Add a small bonus to make it slightly higher
-          highestGame.score = Math.min(92.3, highestGame.score + 0.5);
-          
-          // Insert at position 3 (first bonus game)
-          normalizedGames.splice(bonusGamesStartIndex, 0, highestGame);
+          return {
+            ...game,
+            score: finalScore
+          };
+        });
+        
+        // Ensure the highest score is EXCELLENT (>= 88)
+        const maxScore = Math.max(...distributedGames.map(g => g.score));
+        if (maxScore < 88) {
+          distributedGames[0].score = 89 + Math.random() * 3.3; // 89-92.3
         }
         
-        setGames(normalizedGames);
+        // Sort by final score
+        distributedGames.sort((a, b) => b.score - a.score);
+        
+        // Ensure one of the bonus games (index 3-5) has the highest or second highest score
+        const bonusGamesStartIndex = 3;
+        
+        // Check if any bonus game is in top 2
+        const topTwoScores = [distributedGames[0].score, distributedGames[1].score];
+        const hasBonusInTopTwo = distributedGames
+          .slice(bonusGamesStartIndex)
+          .some(game => topTwoScores.includes(game.score));
+        
+        if (!hasBonusInTopTwo) {
+          // Move one of the top games to the bonus section
+          const topGame = distributedGames.shift()!;
+          // Ensure it's EXCELLENT
+          topGame.score = 90 + Math.random() * 2.3; // 90-92.3
+          
+          // Insert at position 3 (first bonus game)
+          distributedGames.splice(bonusGamesStartIndex, 0, topGame);
+        }
+        
+        setGames(distributedGames);
       } catch (error) {
         console.error("Error calculating scores:", error);
-        setGames(generatedGames.map(g => ({ ...g, score: normalizeScore(50) })));
+        setGames(generatedGames.map(g => ({ ...g, score: 75 })));
       }
       
       setIsLoadingScores(false);
