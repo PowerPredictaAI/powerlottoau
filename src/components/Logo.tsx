@@ -3,7 +3,7 @@ import powerLottoLogo from "@/assets/power-lotto-logo.png";
 
 interface LogoProps {
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 const Logo = ({ className, size = "md" }: LogoProps) => {
@@ -11,18 +11,16 @@ const Logo = ({ className, size = "md" }: LogoProps) => {
     sm: "h-10 w-auto",
     md: "h-14 w-auto",
     lg: "h-20 w-auto",
+    xl: "h-32 w-auto",
   };
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex items-center justify-center", className)}>
       <img 
         src={powerLottoLogo} 
         alt="Power Lotto AI" 
         className={cn(sizeClasses[size])}
       />
-      <span className="font-display font-bold text-foreground text-xl sm:text-2xl">
-        Power Lotto AI
-      </span>
     </div>
   );
 };

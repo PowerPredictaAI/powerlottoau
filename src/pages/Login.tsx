@@ -52,17 +52,14 @@ const Login = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      {/* White Overlay */}
-      <div className="absolute inset-0 bg-white/90 dark:bg-charcoal/90" />
+      {/* Dark Overlay - increased opacity */}
+      <div className="absolute inset-0 bg-charcoal/95 dark:bg-charcoal/95" />
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
-          {/* Logo & Title */}
-          <div className="text-center mb-6 sm:mb-8">
-            <Logo size="lg" className="mb-4 sm:mb-6" />
-            <p className="text-muted-foreground text-base sm:text-lg font-ui px-4">
-              Smart PowerBall Number Analytics
-            </p>
+          {/* Logo Only - Centered and Larger */}
+          <div className="text-center mb-8 sm:mb-12">
+            <Logo size="xl" className="mb-0" />
           </div>
 
           {/* Login Card */}
