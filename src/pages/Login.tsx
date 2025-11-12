@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Target, BarChart2, Zap, Lightbulb, Database, Sparkles } from "lucide-react";
 import Logo from "@/components/Logo";
-import bgImage from "@/assets/lottery-bg.png";
+import bgImage from "@/assets/powerball-bg.jpg";
 import { z } from "zod";
 
 const emailSchema = z.string().email("Please enter the email used at time of purchase");

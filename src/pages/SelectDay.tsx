@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, LogOut, ArrowLeft, Star, Database } from "lucide-react";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
-import bgImage from "@/assets/lottery-bg.png";
+import bgImage from "@/assets/powerball-bg.jpg";
 
 const SelectDay = () => {
   const navigate = useNavigate();

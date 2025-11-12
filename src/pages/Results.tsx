@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, LogOut, Sparkles, Star, Download, Copy } from "lucide-react";
 import Logo from "@/components/Logo";
-import bgImage from "@/assets/lottery-bg.png";
+import bgImage from "@/assets/powerball-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { parsePowerBallDatabase, calculateFrequencies, calculateGameScore, getScoreRating, type GameWithScore } from "@/utils/powerballScoring";
 

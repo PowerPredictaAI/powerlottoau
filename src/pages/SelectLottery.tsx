@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Star, LogOut, Database, Sparkles, Calendar, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
-import bgImage from "@/assets/lottery-bg.png";
+import bgImage from "@/assets/powerball-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

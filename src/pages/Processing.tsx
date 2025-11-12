@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Loader2, Lock } from "lucide-react";
 import Logo from "@/components/Logo";
-import bgImage from "@/assets/lottery-bg.png";
+import bgImage from "@/assets/powerball-bg.jpg";
 
 const Processing = () => {
   const navigate = useNavigate();
