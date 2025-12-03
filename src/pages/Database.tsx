@@ -48,7 +48,8 @@ const Database = () => {
             }
             return null;
           })
-          .filter((record): record is DrawRecord => record !== null);
+          .filter((record): record is DrawRecord => record !== null)
+          .reverse(); // Most recent first
 
         setRecords(parsed);
         setFilteredRecords(parsed);
