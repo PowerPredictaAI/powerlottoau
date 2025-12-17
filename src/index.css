@@ -168,4 +168,19 @@ All colors MUST be HSL.
       box-shadow: 0 0 32px hsl(45 93% 49% / 0.5);
     }
   }
+  
+  @keyframes smart-tips-pulse {
+    0%, 100% {
+      transform: translateX(-50%) scale(1);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+    }
+    50% {
+      transform: translateX(-50%) scale(1.01);
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.25);
+    }
+  }
+  
+  .animate-smart-tips-pulse {
+    animation: smart-tips-pulse 3s ease-in-out infinite;
+  }
 }
