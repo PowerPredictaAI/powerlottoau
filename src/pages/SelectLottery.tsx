@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Star, LogOut, Database, Sparkles, Calendar, Save, X, FileSpreadsheet } from "lucide-react";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
+import SmartTipsPopup from "@/components/SmartTipsPopup";
 import bgImage from "@/assets/powerball-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -25,6 +26,7 @@ const SelectLottery = () => {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLegalDialogOpen, setIsLegalDialogOpen] = useState(false);
+  const [isSmartTipsOpen, setIsSmartTipsOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -484,7 +486,15 @@ const SelectLottery = () => {
           >
             Privacy Policy & Legal
           </button>
+          <button 
+            onClick={() => setIsSmartTipsOpen(true)}
+            className="text-muted-foreground hover:text-foreground underline transition-colors flex items-center gap-1 mx-auto"
+          >
+            💡 Smart Tips
+          </button>
         </div>
+
+        <SmartTipsPopup isOpen={isSmartTipsOpen} onClose={() => setIsSmartTipsOpen(false)} />
 
         {/* Legal Notices Dialog */}
         <Dialog open={isLegalDialogOpen} onOpenChange={setIsLegalDialogOpen}>
