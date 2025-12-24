@@ -480,6 +480,12 @@ const SelectLottery = () => {
         {/* Footer Disclaimer */}
         <div className="mt-12 text-center text-xs text-muted-foreground max-w-2xl mx-auto space-y-2">
           <p>Power Lotto AI is an independent analytics tool. We do not sell tickets and are not affiliated with the Multi-State Lottery Association or any official PowerBall organization. 18+. Educational use only. No guarantee of winnings.</p>
+          <p className="text-muted-foreground/70">
+            If you have any problem with the product, payment, or have a suggestion, feel free to contact us at{" "}
+            <a href="mailto:contacteuroai@gmail.com" className="hover:text-foreground underline transition-colors">
+              contacteuroai@gmail.com
+            </a>
+          </p>
           <button 
             onClick={() => setIsLegalDialogOpen(true)}
             className="text-muted-foreground hover:text-foreground underline transition-colors"
