@@ -145,6 +145,12 @@ const Login = () => {
           <p className="text-xs text-white/50 text-center mt-6 px-4">
             Independent analytics tool. Not affiliated with The National Lottery. 18+. Educational use only.
           </p>
+          <p className="text-xs text-white/40 text-center mt-2 px-4">
+            If you have any problem with the product, payment, or have a suggestion, feel free to contact us at{" "}
+            <a href="mailto:contacteuroai@gmail.com" className="hover:text-white/60 underline transition-colors">
+              contacteuroai@gmail.com
+            </a>
+          </p>
         </div>
       </div>
     </div>
