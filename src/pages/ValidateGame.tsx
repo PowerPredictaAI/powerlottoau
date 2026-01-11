@@ -36,7 +36,7 @@ const ValidateGame = () => {
     if (selectedNumbers.includes(num)) {
       setSelectedNumbers(selectedNumbers.filter(n => n !== num));
     } else {
-      if (selectedNumbers.length < 5) {
+      if (selectedNumbers.length < 7) {
         setSelectedNumbers([...selectedNumbers, num].sort((a, b) => a - b));
       }
     }
@@ -47,14 +47,14 @@ const ValidateGame = () => {
   };
 
   const handleAnalyze = () => {
-    if (selectedNumbers.length === 5 && selectedPowerBall !== null) {
+    if (selectedNumbers.length === 7 && selectedPowerBall !== null) {
       localStorage.setItem("validationNumbers", JSON.stringify(selectedNumbers));
       localStorage.setItem("validationPowerBall", selectedPowerBall.toString());
       navigate("/validate-results");
     }
   };
 
-  const isAnalyzeEnabled = selectedNumbers.length === 5 && selectedPowerBall !== null;
+  const isAnalyzeEnabled = selectedNumbers.length === 7 && selectedPowerBall !== null;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -70,7 +70,7 @@ const ValidateGame = () => {
             <div>
               <Logo size="sm" />
               <p className="text-xs text-red-cta font-semibold">
-                PowerBall USA
+                Powerball Australia
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -108,15 +108,15 @@ const ValidateGame = () => {
           <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-6 mb-6">
             <div className="mb-4">
               <h3 className="text-xl font-display font-bold mb-2">
-                Main Numbers ({selectedNumbers.length}/5)
+                Main Numbers ({selectedNumbers.length}/7)
               </h3>
               <p className="text-sm text-muted-foreground">
-                Select 5 numbers from 1 to 69
+                Select 7 numbers from 1 to 35
               </p>
             </div>
 
-            <div className="grid grid-cols-7 sm:grid-cols-10 gap-2">
-              {Array.from({ length: 69 }, (_, i) => i + 1).map((num) => (
+            <div className="grid grid-cols-7 sm:grid-cols-7 gap-2">
+              {Array.from({ length: 35 }, (_, i) => i + 1).map((num) => (
                 <button
                   key={num}
                   onClick={() => handleNumberClick(num)}
@@ -136,15 +136,15 @@ const ValidateGame = () => {
           <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-6 mb-6">
             <div className="mb-4">
               <h3 className="text-xl font-display font-bold mb-2">
-                PowerBall {selectedPowerBall !== null && `(${selectedPowerBall})`}
+                Powerball {selectedPowerBall !== null && `(${selectedPowerBall})`}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Select 1 PowerBall from 1 to 26
+                Select 1 Powerball from 1 to 20
               </p>
             </div>
 
-            <div className="grid grid-cols-6 sm:grid-cols-13 gap-2">
-              {Array.from({ length: 26 }, (_, i) => i + 1).map((num) => (
+            <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+              {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
                 <button
                   key={num}
                   onClick={() => handlePowerBallClick(num)}
@@ -164,21 +164,21 @@ const ValidateGame = () => {
           {(selectedNumbers.length > 0 || selectedPowerBall !== null) && (
             <Card className="glass-panel dark:glass-panel glass-panel-light border-primary-blue/30 p-6 mb-6">
               <h3 className="text-lg font-display font-bold mb-4">Your Selection</h3>
-              <div className="flex items-center justify-center gap-3 flex-wrap">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                 {selectedNumbers.map((num, idx) => (
                   <div
                     key={idx}
-                    className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-blue to-primary-blue-light flex items-center justify-center shadow-glow-blue"
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-primary-blue to-primary-blue-light flex items-center justify-center shadow-glow-blue"
                   >
-                    <span className="text-xl font-display font-bold text-white">{num}</span>
+                    <span className="text-lg sm:text-xl font-display font-bold text-white">{num}</span>
                   </div>
                 ))}
 
                 {selectedPowerBall !== null && (
                   <>
-                    <span className="text-2xl text-muted-foreground mx-2">+</span>
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
-                      <span className="text-xl font-display font-bold text-white">{selectedPowerBall}</span>
+                    <span className="text-2xl text-muted-foreground mx-1 sm:mx-2">+</span>
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
+                      <span className="text-lg sm:text-xl font-display font-bold text-white">{selectedPowerBall}</span>
                     </div>
                   </>
                 )}

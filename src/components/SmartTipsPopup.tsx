@@ -1,4 +1,3 @@
-import { X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface SmartTipsPopupProps {
@@ -64,14 +63,6 @@ const SmartTipsPopup = ({ isOpen, onClose }: SmartTipsPopupProps) => {
         {/* Disclaimer */}
         <p className="text-xs text-white/40 mt-5 pt-4 border-t border-white/10 leading-relaxed">
           Disclaimer: Power Lotto AI does not guarantee prizes or earnings. All outcomes depend on random draws and your own choices.
-        </p>
-
-        {/* Contact */}
-        <p className="text-xs text-white/30 mt-3 leading-relaxed">
-          If you have any problem with the product, payment, or have a suggestion for improvement, feel free to contact us at{" "}
-          <a href="mailto:contacteuroai@gmail.com" className="text-primary-blue/70 hover:text-primary-blue transition-colors">
-            contacteuroai@gmail.com
-          </a>
         </p>
       </DialogContent>
     </Dialog>

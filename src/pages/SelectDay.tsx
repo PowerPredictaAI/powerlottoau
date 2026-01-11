@@ -32,48 +32,42 @@ const SelectDay = () => {
   };
 
   const getUpcomingDrawDates = () => {
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    // PowerBall draws: Monday (1), Wednesday (3), Saturday (6)
-    const drawDays = [1, 3, 6];
+    // Powerball Australia draws: Thursday (4)
+    const drawDay = 4; // Thursday
     
-    // Draw time: 22:59 ET (Eastern Time)
+    // Use Australian Eastern Time
     const now = new Date();
-    const usTimeString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
-    const usTime = new Date(usTimeString);
+    const auTimeString = now.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' });
+    const auTime = new Date(auTimeString);
     
-    const currentDay = usTime.getDay();
-    const currentHour = usTime.getHours();
+    const currentDay = auTime.getDay();
+    const currentHour = auTime.getHours();
     
     const allDates: { day: string; date: Date }[] = [];
     
-    // Generate dates for each draw day
-    drawDays.forEach(targetDay => {
-      let daysToAdd = (targetDay - currentDay + 7) % 7;
-      
-      // If today is the draw day and it's past 23:00 ET
-      if (daysToAdd === 0 && currentHour >= 23) {
-        daysToAdd = 7;
-      }
-      
-      // Generate next 3 occurrences for this day
-      for (let i = 0; i < 3; i++) {
-        const date = new Date(usTime);
-        date.setDate(usTime.getDate() + daysToAdd + i * 7);
-        date.setHours(22, 59, 0, 0);
-        allDates.push({ day: days[targetDay], date });
-      }
-    });
+    // Calculate days until next Thursday
+    let daysToAdd = (drawDay - currentDay + 7) % 7;
     
-    // Sort all dates chronologically
-    allDates.sort((a, b) => a.date.getTime() - b.date.getTime());
+    // If today is Thursday and it's past 20:30 AEST (draw time), go to next week
+    if (daysToAdd === 0 && currentHour >= 21) {
+      daysToAdd = 7;
+    }
+    
+    // Generate next 4 Thursdays
+    for (let i = 0; i < 4; i++) {
+      const date = new Date(auTime);
+      date.setDate(auTime.getDate() + daysToAdd + i * 7);
+      date.setHours(20, 30, 0, 0); // Draw time: 8:30 PM AEST
+      allDates.push({ day: "Thursday", date });
+    }
     
     return allDates;
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      month: "2-digit",
+    return date.toLocaleDateString("en-AU", {
       day: "2-digit",
+      month: "2-digit",
       year: "2-digit"
     });
   };
@@ -103,7 +97,7 @@ const SelectDay = () => {
             <div>
               <Logo size="sm" />
               <p className="text-xs text-red-cta font-semibold">
-                PowerLotto AI
+                Powerball Australia
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -145,15 +139,18 @@ const SelectDay = () => {
             <h2 className="text-3xl font-display font-bold mb-2">
               Choose Your Draw Date
             </h2>
+            <p className="text-muted-foreground">
+              Powerball Australia draws every Thursday
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             {upcomingDates.map(({ day, date }, idx) => {
               const now = new Date();
-              const usTimeString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
-              const usTime = new Date(usTimeString);
-              const isToday = date.toDateString() === usTime.toDateString();
-              const isNextDraw = idx < 3;
+              const auTimeString = now.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' });
+              const auTime = new Date(auTimeString);
+              const isToday = date.toDateString() === auTime.toDateString();
+              const isNextDraw = idx === 0;
               
               return (
                 <Card 

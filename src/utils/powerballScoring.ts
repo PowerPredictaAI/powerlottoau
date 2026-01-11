@@ -21,7 +21,7 @@ export interface GameWithScore {
   breakdown?: ScoreBreakdown;
 }
 
-// Parse the PowerBall database
+// Parse the Powerball Australia database
 export async function parsePowerBallDatabase(): Promise<DrawRecord[]> {
   try {
     const response = await fetch("/database-powerball.csv");
@@ -32,13 +32,13 @@ export async function parsePowerBallDatabase(): Promise<DrawRecord[]> {
       .filter(line => line.trim())
       .map(line => {
         const parts = line.split(',');
-        if (parts.length >= 3) {
+        if (parts.length >= 2) {
           const nums = parts[1].trim().split(' ');
           return {
             date: parts[0],
-            numbers: nums.slice(0, 5).join(' '),
-            powerball: nums[5] || '',
-            multiplier: parts[2]
+            numbers: nums.slice(0, 7).join(' '), // 7 main numbers for AU
+            powerball: nums[7] || '', // 8th number is powerball for AU
+            multiplier: parts[2] || ''
           };
         }
         return null;
@@ -57,11 +57,13 @@ export function calculateFrequencies(records: DrawRecord[]) {
   const pairFreq: { [key: string]: number } = {};
 
   records.forEach(record => {
-    const nums = record.numbers.split(" ").map(n => parseInt(n));
+    const nums = record.numbers.split(" ").map(n => parseInt(n)).filter(n => !isNaN(n));
     
     // Count individual numbers
     nums.forEach(num => {
-      mainFreq[num] = (mainFreq[num] || 0) + 1;
+      if (num >= 1 && num <= 35) {
+        mainFreq[num] = (mainFreq[num] || 0) + 1;
+      }
     });
 
     // Count pairs (confluence)
@@ -72,9 +74,11 @@ export function calculateFrequencies(records: DrawRecord[]) {
       }
     }
 
-    // Count PowerBall
+    // Count Powerball (1-20 for AU)
     const pb = parseInt(record.powerball);
-    powerballFreq[pb] = (powerballFreq[pb] || 0) + 1;
+    if (pb >= 1 && pb <= 20) {
+      powerballFreq[pb] = (powerballFreq[pb] || 0) + 1;
+    }
   });
 
   return { mainFreq, powerballFreq, pairFreq };
@@ -91,15 +95,15 @@ function calculateFrequencyScore(
   let score = 0;
   const maxPossibleFreq = totalDraws * 0.05; // Top 5% frequency
 
-  // Score main numbers
+  // Score main numbers (7 numbers for AU)
   numbers.forEach(num => {
     const freq = mainFreq[num] || 0;
-    score += (freq / maxPossibleFreq) * 15; // Max 15 points per number = 75 total
+    score += (freq / maxPossibleFreq) * 10; // Max 10 points per number = 70 total
   });
 
-  // Score PowerBall
+  // Score Powerball
   const pbFreq = powerballFreq[powerball] || 0;
-  score += (pbFreq / maxPossibleFreq) * 25; // Max 25 points
+  score += (pbFreq / maxPossibleFreq) * 30; // Max 30 points
 
   return Math.min(score, 100);
 }
@@ -118,12 +122,12 @@ function calculateConfluenceScore(
     for (let j = i + 1; j < numbers.length; j++) {
       const pair = [numbers[i], numbers[j]].sort((a, b) => a - b).join('-');
       const freq = pairFreq[pair] || 0;
-      score += (freq / maxPairFreq) * 10;
+      score += (freq / maxPairFreq) * 5;
       pairCount++;
     }
   }
 
-  return Math.min(score / pairCount, 100);
+  return pairCount > 0 ? Math.min(score / pairCount, 100) : 0;
 }
 
 // Calculate pattern score (sequences, gaps, etc)
@@ -137,23 +141,23 @@ function calculatePatternScore(numbers: number[]): number {
       consecutiveCount++;
     }
   }
-  score -= consecutiveCount * 15;
+  score -= consecutiveCount * 12;
 
-  // Penalize all numbers in same range
+  // Penalize all numbers in same range (adjusted for 1-35 range)
   const ranges = [
-    numbers.filter(n => n <= 15).length,
-    numbers.filter(n => n > 15 && n <= 30).length,
-    numbers.filter(n => n > 30 && n <= 45).length,
-    numbers.filter(n => n > 45 && n <= 60).length,
-    numbers.filter(n => n > 60).length
+    numbers.filter(n => n <= 7).length,
+    numbers.filter(n => n > 7 && n <= 14).length,
+    numbers.filter(n => n > 14 && n <= 21).length,
+    numbers.filter(n => n > 21 && n <= 28).length,
+    numbers.filter(n => n > 28).length
   ];
   const maxInOneRange = Math.max(...ranges);
-  if (maxInOneRange >= 4) score -= 20;
-  if (maxInOneRange === 5) score -= 30;
+  if (maxInOneRange >= 5) score -= 20;
+  if (maxInOneRange >= 6) score -= 30;
 
   // Check for arithmetic sequences
   const gaps = numbers.slice(1).map((n, i) => n - numbers[i]);
-  const hasArithmeticSeq = gaps.every(g => g === gaps[0]);
+  const hasArithmeticSeq = gaps.every(g => g === gaps[0]) && gaps[0] !== 0;
   if (hasArithmeticSeq) score -= 25;
 
   return Math.max(score, 0);
@@ -163,21 +167,21 @@ function calculatePatternScore(numbers: number[]): number {
 function calculateDistributionScore(numbers: number[]): number {
   let score = 0;
 
-  // Even/Odd balance (optimal is 2-3 or 3-2)
+  // Even/Odd balance (optimal is 3-4 or 4-3 for 7 numbers)
   const evenCount = numbers.filter(n => n % 2 === 0).length;
-  if (evenCount >= 2 && evenCount <= 3) {
+  if (evenCount >= 3 && evenCount <= 4) {
     score += 50;
-  } else if (evenCount === 1 || evenCount === 4) {
+  } else if (evenCount === 2 || evenCount === 5) {
     score += 30;
   } else {
     score += 10;
   }
 
-  // High/Low balance (optimal is 2-3 or 3-2, where 35 is the midpoint)
-  const lowCount = numbers.filter(n => n <= 35).length;
-  if (lowCount >= 2 && lowCount <= 3) {
+  // High/Low balance (optimal is 3-4 or 4-3, where 17 is the midpoint for 1-35)
+  const lowCount = numbers.filter(n => n <= 17).length;
+  if (lowCount >= 3 && lowCount <= 4) {
     score += 50;
-  } else if (lowCount === 1 || lowCount === 4) {
+  } else if (lowCount === 2 || lowCount === 5) {
     score += 30;
   } else {
     score += 10;
@@ -186,7 +190,7 @@ function calculateDistributionScore(numbers: number[]): number {
   return score;
 }
 
-// Calculate PowerBall affinity score
+// Calculate Powerball affinity score
 function calculatePowerBallScore(
   mainNumbers: number[],
   powerball: number,
@@ -195,9 +199,9 @@ function calculatePowerBallScore(
   let score = 0;
   let matchCount = 0;
 
-  // Check how often this PowerBall appeared with similar main numbers
+  // Check how often this Powerball appeared with similar main numbers
   records.forEach(record => {
-    const nums = record.numbers.split(" ").map(n => parseInt(n));
+    const nums = record.numbers.split(" ").map(n => parseInt(n)).filter(n => !isNaN(n));
     const pb = parseInt(record.powerball);
     
     if (pb === powerball) {
@@ -208,7 +212,7 @@ function calculatePowerBallScore(
     }
   });
 
-  score = (matchCount / records.length) * 1000;
+  score = records.length > 0 ? (matchCount / records.length) * 1000 : 0;
   return Math.min(score, 100);
 }
 

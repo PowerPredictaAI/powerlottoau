@@ -78,8 +78,8 @@ const SelectLottery = () => {
             const nums = parts[1].trim().split(' ');
             return {
               date: parts[0],
-              numbers: nums.slice(0, 5).join(' '),
-              powerball: nums[5] || '',
+              numbers: nums.slice(0, 7).join(' '),
+              powerball: nums[7] || '',
               multiplier: parts[2]
             };
           }
@@ -114,10 +114,14 @@ const SelectLottery = () => {
       filteredRecords.forEach(record => {
         record.numbers.split(" ").forEach(num => {
           const n = parseInt(num);
-          mainNumberFrequency[n] = (mainNumberFrequency[n] || 0) + 1;
+          if (n >= 1 && n <= 35) {
+            mainNumberFrequency[n] = (mainNumberFrequency[n] || 0) + 1;
+          }
         });
         const pb = parseInt(record.powerball);
-        powerballFrequency[pb] = (powerballFrequency[pb] || 0) + 1;
+        if (pb >= 1 && pb <= 20) {
+          powerballFrequency[pb] = (powerballFrequency[pb] || 0) + 1;
+        }
       });
 
       // Sort by frequency
@@ -129,18 +133,18 @@ const SelectLottery = () => {
         .sort((a, b) => b[1] - a[1])
         .map(([num]) => parseInt(num));
 
-      // Generate numbers with bias towards most frequent
+      // Generate 7 main numbers with bias towards most frequent
       const mainNumbers: number[] = [];
-      while (mainNumbers.length < 5) {
+      while (mainNumbers.length < 7) {
         const randomIndex = Math.floor(Math.random() * Math.min(15, sortedMainNumbers.length));
         const num = sortedMainNumbers[randomIndex];
-        if (!mainNumbers.includes(num)) {
+        if (!mainNumbers.includes(num) && num >= 1 && num <= 35) {
           mainNumbers.push(num);
         }
       }
 
       const powerballIndex = Math.floor(Math.random() * Math.min(5, sortedPowerballs.length));
-      const powerBall = sortedPowerballs[powerballIndex];
+      const powerBall = sortedPowerballs[powerballIndex] || 1;
 
       mainNumbers.sort((a, b) => a - b);
 
@@ -178,17 +182,17 @@ const SelectLottery = () => {
   const saveNumbers = () => {
     if (!generatedNumbers || !startDate || !endDate) return;
 
-    const content = `Power Lotto AI - AI Generated Numbers\n` +
-      `Period: ${format(startDate, "MM/dd/yyyy")} - ${format(endDate, "MM/dd/yyyy")}\n` +
-      `Generated: ${new Date().toLocaleDateString('en-US')}\n\n` +
+    const content = `Powerball Australia AI - AI Generated Numbers\n` +
+      `Period: ${format(startDate, "dd/MM/yyyy")} - ${format(endDate, "dd/MM/yyyy")}\n` +
+      `Generated: ${new Date().toLocaleDateString('en-AU')}\n\n` +
       `Main Numbers: ${generatedNumbers.mainNumbers.join(", ")}\n` +
-      `PowerBall: ${generatedNumbers.powerBall}\n`;
+      `Powerball: ${generatedNumbers.powerBall}\n`;
 
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `powerlotto-ai-numbers-${Date.now()}.txt`;
+    link.download = `powerball-au-numbers-${Date.now()}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -258,10 +262,10 @@ const SelectLottery = () => {
       <div className="max-w-4xl mx-auto px-6 py-6 sm:py-12">
         <div className="text-center mb-6 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl font-display font-bold mb-2">
-            PowerLotto AI
+            Powerball Australia AI
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground px-4">
-            Generate AI-powered numbers for PowerBall
+            Generate AI-powered numbers for Powerball Australia
           </p>
         </div>
 
@@ -275,11 +279,11 @@ const SelectLottery = () => {
               <div className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 mb-2 sm:mb-4 shadow-glow-gold">
                 <Star className="h-7 w-7 sm:h-10 sm:w-10 text-white" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-display font-bold">PowerBall</h3>
+              <h3 className="text-xl sm:text-2xl font-display font-bold">Powerball Australia</h3>
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                <p className="font-medium">5 Numbers (1-69)</p>
-                <p className="font-medium">1 PowerBall (1-26)</p>
-                <p className="text-red-cta font-semibold">Draws: Monday, Wednesday & Saturday</p>
+                <p className="font-medium">7 Numbers (1-35)</p>
+                <p className="font-medium">1 Powerball (1-20)</p>
+                <p className="text-red-cta font-semibold">Draws: Thursday</p>
               </div>
               <Button 
                 className="w-full bg-gradient-to-r from-red-cta to-red-cta/80 hover:shadow-glow-gold text-sm sm:text-base"
@@ -302,7 +306,7 @@ const SelectLottery = () => {
             className="gap-2 min-w-[240px] sm:min-w-[280px] text-sm sm:text-base bg-gradient-to-r from-gold-ai via-gold-ai/90 to-gold-ai text-charcoal font-semibold hover:shadow-glow-gold hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-gold-ai/20"
           >
             <Database className="h-4 w-4 sm:h-5 sm:w-5" />
-            Access PowerBall Database
+            Access Powerball Database
           </Button>
           
           <Button
@@ -393,7 +397,7 @@ const SelectLottery = () => {
                 <Card className="glass-panel dark:glass-panel glass-panel-light p-4 border-2 border-primary-blue/20 bg-gradient-to-br from-primary-blue/5 to-transparent">
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">Main Numbers</p>
+                      <p className="text-sm text-muted-foreground mb-2">Main Numbers (7)</p>
                       <div className="flex gap-2 flex-wrap">
                         {generatedNumbers.mainNumbers.map((num, idx) => (
                           <span
@@ -407,7 +411,7 @@ const SelectLottery = () => {
                     </div>
                     
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">PowerBall</p>
+                      <p className="text-sm text-muted-foreground mb-2">Powerball</p>
                       <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-cta text-white font-bold shadow-lg">
                         {generatedNumbers.powerBall}
                       </span>
@@ -437,7 +441,7 @@ const SelectLottery = () => {
                     </div>
 
                     <div>
-                      <p className="text-xs text-muted-foreground mb-2">PowerBall (Top 6)</p>
+                      <p className="text-xs text-muted-foreground mb-2">Powerball (Top 6)</p>
                       <div className="flex gap-1.5 flex-wrap">
                         {mostFrequentPowerBall.map((item, idx) => (
                           <div key={idx} className="flex flex-col items-center">
@@ -479,13 +483,7 @@ const SelectLottery = () => {
 
         {/* Footer Disclaimer */}
         <div className="mt-12 text-center text-xs text-muted-foreground max-w-2xl mx-auto space-y-2">
-          <p>Power Lotto AI is an independent analytics tool. We do not sell tickets and are not affiliated with the Multi-State Lottery Association or any official PowerBall organization. 18+. Educational use only. No guarantee of winnings.</p>
-          <p className="text-muted-foreground/70">
-            If you have any problem with the product, payment, or have a suggestion, feel free to contact us at{" "}
-            <a href="mailto:contacteuroai@gmail.com" className="hover:text-foreground underline transition-colors">
-              contacteuroai@gmail.com
-            </a>
-          </p>
+          <p>Power Lotto AI is an independent analytics tool. Not affiliated with The Lott or any official Australian lottery operator. 18+. Educational use only. No guarantee of winnings.</p>
           <button 
             onClick={() => setIsLegalDialogOpen(true)}
             className="text-muted-foreground hover:text-foreground underline transition-colors"
@@ -512,7 +510,7 @@ const SelectLottery = () => {
             <div className="space-y-4 text-sm leading-relaxed">
               <div>
                 <h4 className="font-semibold mb-1">Independent tool.</h4>
-                <p className="text-muted-foreground">We are not affiliated with, endorsed by or officially connected to any operator, organiser or brand.</p>
+                <p className="text-muted-foreground">We are not affiliated with, endorsed by or officially connected to The Lott or any official Australian lottery operator.</p>
               </div>
 
               <div>
