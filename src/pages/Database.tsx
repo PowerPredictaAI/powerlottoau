@@ -41,8 +41,8 @@ const Database = () => {
               const nums = parts[1].trim().split(' ');
               return {
                 date: parts[0],
-                numbers: nums.slice(0, 5).join(' '),
-                powerball: nums[5] || '',
+                numbers: nums.slice(0, 7).join(' '),
+                powerball: nums[7] || '',
                 multiplier: parts[2]
               };
             }
@@ -81,7 +81,7 @@ const Database = () => {
     setFilteredRecords(filtered);
   }, [searchTerm, selectedYear, records]);
 
-  // Extrair anos únicos dos registros
+  // Extract unique years from records
   const availableYears = Array.from(new Set(
     records.map(record => {
       const year = record.date.match(/\d{4}/)?.[0];
@@ -98,10 +98,14 @@ const Database = () => {
     filteredRecords.forEach(record => {
       record.numbers.split(" ").forEach(num => {
         const n = parseInt(num);
-        mainNumberFrequency[n] = (mainNumberFrequency[n] || 0) + 1;
+        if (n >= 1 && n <= 35) {
+          mainNumberFrequency[n] = (mainNumberFrequency[n] || 0) + 1;
+        }
       });
       const pb = parseInt(record.powerball);
-      powerballFrequency[pb] = (powerballFrequency[pb] || 0) + 1;
+      if (pb >= 1 && pb <= 20) {
+        powerballFrequency[pb] = (powerballFrequency[pb] || 0) + 1;
+      }
     });
 
     const sortedMainNumbers = Object.entries(mainNumberFrequency)
@@ -112,17 +116,18 @@ const Database = () => {
       .sort((a, b) => b[1] - a[1])
       .map(([num]) => parseInt(num));
 
+    // Generate 7 main numbers
     const mainNumbers: number[] = [];
-    while (mainNumbers.length < 5) {
+    while (mainNumbers.length < 7) {
       const randomIndex = Math.floor(Math.random() * Math.min(15, sortedMainNumbers.length));
       const num = sortedMainNumbers[randomIndex];
-      if (!mainNumbers.includes(num)) {
+      if (!mainNumbers.includes(num) && num >= 1 && num <= 35) {
         mainNumbers.push(num);
       }
     }
 
     const powerballIndex = Math.floor(Math.random() * Math.min(5, sortedPowerballs.length));
-    const luckyStars = [sortedPowerballs[powerballIndex]];
+    const luckyStars = [sortedPowerballs[powerballIndex] || 1];
 
     mainNumbers.sort((a, b) => a - b);
 
@@ -137,39 +142,39 @@ const Database = () => {
   const saveNumbers = () => {
     if (!generatedNumbers) return;
 
-    const content = `Power Lotto AI - Generated Numbers\n` +
+    const content = `Powerball Australia AI - Generated Numbers\n` +
       `Based on: ${filteredRecords.length} draws\n` +
-      `Date: ${new Date().toLocaleDateString('en-US')}\n\n` +
+      `Date: ${new Date().toLocaleDateString('en-AU')}\n\n` +
       `Main Numbers: ${generatedNumbers.mainNumbers.join(", ")}\n` +
-      `PowerBall: ${generatedNumbers.luckyStars.join(", ")}\n`;
+      `Powerball: ${generatedNumbers.luckyStars.join(", ")}\n`;
 
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `powerlotto-ai-numbers-${Date.now()}.txt`;
+    link.download = `powerball-au-numbers-${Date.now()}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
     toast({
-      title: "Números salvos!",
-      description: "Arquivo TXT baixado com sucesso",
+      title: "Numbers saved!",
+      description: "TXT file downloaded successfully",
     });
   };
 
   const exportToCSV = () => {
     const csvContent = "data:text/csv;charset=utf-8," 
-      + "Draw Date,Winning Numbers,PowerBall,Multiplier\n"
+      + "Draw Date,Winning Numbers,Powerball\n"
       + filteredRecords.map(r => 
-          `${r.date},${r.numbers},${r.powerball},${r.multiplier}`
+          `${r.date},${r.numbers},${r.powerball}`
         ).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "powerball-history.csv");
+    link.setAttribute("download", "powerball-australia-history.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -213,7 +218,7 @@ const Database = () => {
               <DatabaseIcon className="h-6 w-6 sm:h-8 sm:w-8 text-primary-blue" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-display font-bold">PowerBall Draw History</h1>
+              <h1 className="text-2xl sm:text-3xl font-display font-bold">Powerball Australia History</h1>
               <p className="text-sm text-muted-foreground">Complete historical database of all draws</p>
             </div>
           </div>
@@ -283,7 +288,7 @@ const Database = () => {
             
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Main Numbers</p>
+                <p className="text-sm text-muted-foreground mb-2">Main Numbers (7)</p>
                 <div className="flex gap-2 flex-wrap">
                   {generatedNumbers.mainNumbers.map((num, idx) => (
                     <span
@@ -297,7 +302,7 @@ const Database = () => {
               </div>
               
               <div>
-                <p className="text-sm text-muted-foreground mb-2">PowerBall</p>
+                <p className="text-sm text-muted-foreground mb-2">Powerball</p>
                 <div className="flex gap-2">
                   {generatedNumbers.luckyStars.map((star, idx) => (
                     <span
@@ -333,7 +338,7 @@ const Database = () => {
                 </div>
                 <div>
                   <p className="text-xs sm:text-sm font-bold text-primary-blue">Filter by Year</p>
-                  <p className="text-xs text-muted-foreground">Data since 2010</p>
+                  <p className="text-xs text-muted-foreground">Historical data</p>
                 </div>
               </div>
               
@@ -375,9 +380,8 @@ const Database = () => {
                 <TableHeader>
                   <TableRow className="bg-muted/50">
                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Date</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Main Numbers</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">PowerBall</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm text-center px-2 sm:px-4 py-2 sm:py-3">Multiplier</TableHead>
+                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Main Numbers (7)</TableHead>
+                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Powerball</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -399,11 +403,6 @@ const Database = () => {
                       <TableCell className="px-2 sm:px-4 py-2 sm:py-3">
                         <span className="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-cta/10 text-red-cta font-bold text-xs sm:text-sm">
                           {record.powerball}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-center px-2 sm:px-4 py-2 sm:py-3">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full bg-muted text-xs font-semibold">
-                          {record.multiplier}x
                         </span>
                       </TableCell>
                     </TableRow>

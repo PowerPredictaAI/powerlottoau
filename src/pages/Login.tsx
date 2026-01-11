@@ -111,7 +111,7 @@ const Login = () => {
                 <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/20 backdrop-blur-sm flex-shrink-0">
                   <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-gold-ai" />
                 </div>
-                <span className="text-white/90">✨ Generate numbers through patterns of 1800+ analyzed games</span>
+                <span className="text-white/90">✨ Generate numbers through patterns of 1000+ analyzed games</span>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
                 <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/20 backdrop-blur-sm flex-shrink-0">
@@ -123,7 +123,7 @@ const Login = () => {
                 <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/20 backdrop-blur-sm flex-shrink-0">
                   <BarChart2 className="h-4 w-4 sm:h-5 sm:w-5 text-gold-ai" />
                 </div>
-                <span className="text-white/90">📊 Daily updates & insights</span>
+                <span className="text-white/90">📊 Weekly updates & insights</span>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
                 <div className="p-1.5 sm:p-2 rounded-lg bg-green-success/20 backdrop-blur-sm flex-shrink-0">
@@ -135,7 +135,7 @@ const Login = () => {
                 <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/20 backdrop-blur-sm flex-shrink-0">
                   <Database className="h-4 w-4 sm:h-5 sm:w-5 text-primary-blue" />
                 </div>
-                <span className="text-white/90">📂 Access to previous draws database (since 2010)</span>
+                <span className="text-white/90">📂 Access to previous draws database</span>
               </div>
             </div>
 
@@ -143,7 +143,7 @@ const Login = () => {
 
           {/* Disclaimer */}
           <p className="text-xs text-white/50 text-center mt-6 px-4">
-            Independent analytics tool. Not affiliated with The National Lottery. 18+. Educational use only.
+            Not affiliated with The Lott or any official Australian lottery operator. 18+. Educational use only. No guarantee of winnings.
           </p>
         </div>
       </div>

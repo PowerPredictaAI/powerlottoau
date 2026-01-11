@@ -6,7 +6,7 @@ import { ArrowLeft, LogOut, Sparkles, Star, Download, Copy } from "lucide-react"
 import Logo from "@/components/Logo";
 import bgImage from "@/assets/powerball-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
-import { parsePowerBallDatabase, calculateFrequencies, calculateGameScore, getScoreRating, normalizeScore, type GameWithScore } from "@/utils/powerballScoring";
+import { parsePowerBallDatabase, calculateFrequencies, calculateGameScore, getScoreRating, type GameWithScore } from "@/utils/powerballScoring";
 
 const Results = () => {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const Results = () => {
       setSelectedDay(day || "");
       setSelectedDate(date || "");
 
-      // Generate 6 PowerBall games
+      // Generate 6 Powerball Australia games (7 main + 1 powerball)
       const generatedGames = Array.from({ length: 6 }, () => generateNumbers());
       
       // Calculate scores based on historical data
@@ -49,7 +49,6 @@ const Results = () => {
         gamesWithScores.sort((a, b) => b.score - a.score);
         
         // Create a varied distribution: 70-92.3
-        // Target distribution: 1 EXCELLENT (88-92.3), 1-2 VERY GOOD (82-88), 2 GOOD (77-82), 1-2 AVERAGE (73-77), 0-1 BELOW AVERAGE (70-73)
         const targetScores = [
           91.5,  // EXCELLENT
           86.5,  // VERY GOOD
@@ -61,9 +60,8 @@ const Results = () => {
         
         // Apply target scores based on the original ranking
         const distributedGames = gamesWithScores.map((game, index) => {
-          // Add some randomness to make it more natural
           const baseScore = targetScores[index];
-          const randomVariation = (Math.random() - 0.5) * 2; // -1 to +1
+          const randomVariation = (Math.random() - 0.5) * 2;
           const finalScore = Math.max(70, Math.min(92.3, baseScore + randomVariation));
           
           return {
@@ -75,7 +73,7 @@ const Results = () => {
         // Ensure the highest score is EXCELLENT (>= 88)
         const maxScore = Math.max(...distributedGames.map(g => g.score));
         if (maxScore < 88) {
-          distributedGames[0].score = 89 + Math.random() * 3.3; // 89-92.3
+          distributedGames[0].score = 89 + Math.random() * 3.3;
         }
         
         // Sort by final score
@@ -84,19 +82,14 @@ const Results = () => {
         // Ensure one of the bonus games (index 3-5) has the highest or second highest score
         const bonusGamesStartIndex = 3;
         
-        // Check if any bonus game is in top 2
         const topTwoScores = [distributedGames[0].score, distributedGames[1].score];
         const hasBonusInTopTwo = distributedGames
           .slice(bonusGamesStartIndex)
           .some(game => topTwoScores.includes(game.score));
         
         if (!hasBonusInTopTwo) {
-          // Move one of the top games to the bonus section
           const topGame = distributedGames.shift()!;
-          // Ensure it's EXCELLENT
-          topGame.score = 90 + Math.random() * 2.3; // 90-92.3
-          
-          // Insert at position 3 (first bonus game)
+          topGame.score = 90 + Math.random() * 2.3;
           distributedGames.splice(bonusGamesStartIndex, 0, topGame);
         }
         
@@ -113,18 +106,18 @@ const Results = () => {
   }, [navigate]);
 
   const generateNumbers = (): { mainNumbers: number[], powerBall: number } => {
-    // Generate 5 main numbers (1-69)
+    // Generate 7 main numbers (1-35) for Powerball Australia
     const mainNumbers: number[] = [];
-    while (mainNumbers.length < 5) {
-      const num = Math.floor(Math.random() * 69) + 1;
+    while (mainNumbers.length < 7) {
+      const num = Math.floor(Math.random() * 35) + 1;
       if (!mainNumbers.includes(num)) {
         mainNumbers.push(num);
       }
     }
     mainNumbers.sort((a, b) => a - b);
     
-    // Generate PowerBall (1-26)
-    const powerBall = Math.floor(Math.random() * 26) + 1;
+    // Generate Powerball (1-20) for Powerball Australia
+    const powerBall = Math.floor(Math.random() * 20) + 1;
     
     return { mainNumbers, powerBall };
   };
@@ -139,7 +132,7 @@ const Results = () => {
   };
 
   const handleCopyGame = (game: GameWithScore, index: number) => {
-    const text = `Game ${index + 1}: ${game.mainNumbers.join(", ")} | PowerBall: ${game.powerBall}${game.score ? ` | Score: ${game.score.toFixed(1)}` : ''}`;
+    const text = `Game ${index + 1}: ${game.mainNumbers.join(", ")} | Powerball: ${game.powerBall}${game.score ? ` | Score: ${game.score.toFixed(1)}` : ''}`;
     
     navigator.clipboard.writeText(text).then(() => {
       toast({
@@ -153,33 +146,33 @@ const Results = () => {
     const mainGames = games.slice(0, 3);
     const bonusGames = games.slice(3, 6);
     
-    let content = `Power Lotto AI - Generated Numbers\n`;
+    let content = `Powerball Australia AI - Generated Numbers\n`;
     content += `PowerLotto AI\n`;
     content += `${selectedDay} - ${formattedDate}\n\n`;
     
     content += `MAIN GAMES:\n`;
     mainGames.forEach((game, idx) => {
-      content += `Game ${idx + 1}: ${game.mainNumbers.join(", ")} | PowerBall: ${game.powerBall}\n`;
+      content += `Game ${idx + 1}: ${game.mainNumbers.join(", ")} | Powerball: ${game.powerBall}\n`;
     });
     
     content += `\nBONUS GAMES:\n`;
     bonusGames.forEach((game, idx) => {
-      content += `Bonus Game ${idx + 1}: ${game.mainNumbers.join(", ")} | PowerBall: ${game.powerBall}\n`;
+      content += `Bonus Game ${idx + 1}: ${game.mainNumbers.join(", ")} | Powerball: ${game.powerBall}\n`;
     });
     
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `powerlotto-ai-numbers-${selectedDay}-${formattedDate.replace(/\//g, "-")}.txt`;
+    a.download = `powerball-au-numbers-${selectedDay}-${formattedDate.replace(/\//g, "-")}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const formattedDate = selectedDate
-    ? new Date(selectedDate).toLocaleDateString("en-US", { 
-        month: "2-digit", 
+    ? new Date(selectedDate).toLocaleDateString("en-AU", { 
         day: "2-digit", 
+        month: "2-digit", 
         year: "2-digit" 
       })
     : "";
@@ -201,7 +194,7 @@ const Results = () => {
             <div>
               <Logo size="sm" />
               <p className="text-xs text-red-cta font-semibold">
-                PowerLotto AI
+                Powerball Australia
               </p>
             </div>
           <div className="flex items-center gap-4">
@@ -281,20 +274,20 @@ const Results = () => {
                   </div>
                 </div>
 
-              <div className="flex items-center justify-center gap-3 flex-wrap">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                 {game.mainNumbers.map((num, idx) => (
                   <div
                     key={idx}
-                    className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-blue to-primary-blue-light flex items-center justify-center shadow-glow-blue"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary-blue to-primary-blue-light flex items-center justify-center shadow-glow-blue"
                   >
-                    <span className="text-xl font-display font-bold text-white">{num}</span>
+                    <span className="text-lg sm:text-xl font-display font-bold text-white">{num}</span>
                   </div>
                 ))}
 
-                <span className="text-2xl text-muted-foreground mx-2">+</span>
+                <span className="text-xl sm:text-2xl text-muted-foreground mx-1 sm:mx-2">+</span>
 
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
-                  <span className="text-xl font-display font-bold text-white">{game.powerBall}</span>
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
+                  <span className="text-lg sm:text-xl font-display font-bold text-white">{game.powerBall}</span>
                 </div>
               </div>
             </Card>
@@ -339,20 +332,20 @@ const Results = () => {
                     </div>
                   </div>
 
-                <div className="flex items-center justify-center gap-3 flex-wrap">
+                <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                   {game.mainNumbers.map((num, idx) => (
                     <div
                       key={idx}
-                      className="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-lg"
+                      className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow-lg"
                     >
-                      <span className="text-xl font-display font-bold text-purple-700">{num}</span>
+                      <span className="text-lg sm:text-xl font-display font-bold text-purple-700">{num}</span>
                     </div>
                   ))}
 
-                  <span className="text-2xl text-white mx-1">+</span>
+                  <span className="text-xl sm:text-2xl text-white mx-1">+</span>
                   
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-white/50">
-                    <span className="text-xl font-display font-bold text-white">{game.powerBall}</span>
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-white/50">
+                    <span className="text-lg sm:text-xl font-display font-bold text-white">{game.powerBall}</span>
                   </div>
                 </div>
               </Card>
@@ -375,7 +368,7 @@ const Results = () => {
           </Card>
           <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-4 text-center">
             <div className="text-3xl mb-1">🏆</div>
-            <div className="text-2xl font-display font-bold">2,400+</div>
+            <div className="text-2xl font-display font-bold">1,000+</div>
             <div className="text-xs text-muted-foreground">Drawings analyzed</div>
           </Card>
         </div>
@@ -404,7 +397,7 @@ const Results = () => {
                 <span className="font-display font-semibold">Drawing time</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Monday, Wednesday & Saturday at 22:59 ET
+                Thursday nights (AEST/AEDT)
               </p>
             </div>
 
@@ -414,7 +407,7 @@ const Results = () => {
                 <span className="font-display font-semibold">How to play</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Pick 5 numbers (1-69) + 1 PowerBall (1-26)
+                Pick 7 numbers (1-35) + 1 Powerball (1-20)
               </p>
             </div>
 
@@ -424,7 +417,7 @@ const Results = () => {
                 <span className="font-display font-semibold">Ticket cost</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                $2 per play | $3 with Power Play
+                Pricing varies by state/retailer — check official sources
               </p>
             </div>
 
@@ -434,7 +427,7 @@ const Results = () => {
                 <span className="font-display font-semibold">Prizes</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                9 prize tiers - Match PowerBall only to win
+                9 prize divisions - Match Powerball only to win
               </p>
             </div>
           </div>
@@ -460,7 +453,7 @@ const Results = () => {
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground text-center mt-8 px-4">
-          Power Lotto AI is an independent analytics tool. We do not sell tickets and are not affiliated with the Multi-State Lottery Association or any official PowerBall organization. 18+. Educational use only. No guarantee of winnings.
+          Power Lotto AI is an independent analytics tool. Not affiliated with The Lott or any official Australian lottery operator. 18+. Educational use only. No guarantee of winnings.
         </p>
       </div>
       </div>

@@ -48,10 +48,10 @@ const ValidateResults = () => {
     // Calculate probability based on pattern analysis
     let baseProb = 0;
     
-    // Check for patterns
+    // Check for patterns (adjusted for 7 numbers, 1-35 range)
     const hasSequence = nums.some((num, i) => i > 0 && num === nums[i - 1] + 1);
     const hasEvenOddBalance = Math.abs(nums.filter(n => n % 2 === 0).length - nums.filter(n => n % 2 !== 0).length) <= 1;
-    const hasLowHighBalance = Math.abs(nums.filter(n => n <= 35).length - nums.filter(n => n > 35).length) <= 1;
+    const hasLowHighBalance = Math.abs(nums.filter(n => n <= 17).length - nums.filter(n => n > 17).length) <= 2;
     
     // Base probability range
     baseProb = 0.15 + (seededRandom * 0.35); // 15% to 50%
@@ -61,8 +61,8 @@ const ValidateResults = () => {
     if (hasEvenOddBalance) baseProb *= 1.15;
     if (hasLowHighBalance) baseProb *= 1.12;
     
-    // PowerBall bonus
-    if (pb <= 13) baseProb *= 1.08; // Lower PowerBall numbers are slightly more common
+    // PowerBall bonus (1-20 range for AU)
+    if (pb <= 10) baseProb *= 1.08; // Lower Powerball numbers are slightly more common
     
     // Cap at reasonable values
     baseProb = Math.min(Math.max(baseProb, 0.10), 0.68);
@@ -72,7 +72,7 @@ const ValidateResults = () => {
     // Determine rating and analysis
     if (baseProb >= 0.50) {
       setRating("Excellent Choice!");
-      setAnalysis("Your numbers show strong patterns aligned with historical winning data. Good balance of odd/even and high/low numbers with an optimal PowerBall selection.");
+      setAnalysis("Your numbers show strong patterns aligned with historical winning data. Good balance of odd/even and high/low numbers with an optimal Powerball selection.");
       setColor("text-green-success");
     } else if (baseProb >= 0.35) {
       setRating("Good Selection");
@@ -118,7 +118,7 @@ const ValidateResults = () => {
             <div>
               <Logo size="sm" />
               <p className="text-xs text-red-cta font-semibold">
-                PowerBall USA
+                Powerball Australia
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -151,26 +151,26 @@ const ValidateResults = () => {
 
           <div className="text-center mb-8">
             <h1 className="text-3xl font-display font-bold mb-2">AI Analysis Results</h1>
-            <p className="text-muted-foreground">Based on 2,400+ historical PowerBall drawings</p>
+            <p className="text-muted-foreground">Based on historical Powerball Australia drawings</p>
           </div>
 
           {/* Your Numbers */}
           <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-6 mb-6">
             <h3 className="text-lg font-display font-bold mb-4">Your Numbers</h3>
-            <div className="flex items-center justify-center gap-3 flex-wrap">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
               {numbers.map((num, idx) => (
                 <div
                   key={idx}
-                  className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-blue to-primary-blue-light flex items-center justify-center shadow-glow-blue"
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-primary-blue to-primary-blue-light flex items-center justify-center shadow-glow-blue"
                 >
-                  <span className="text-xl font-display font-bold text-white">{num}</span>
+                  <span className="text-lg sm:text-xl font-display font-bold text-white">{num}</span>
                 </div>
               ))}
 
-              <span className="text-2xl text-muted-foreground mx-2">+</span>
+              <span className="text-2xl text-muted-foreground mx-1 sm:mx-2">+</span>
 
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
-                <span className="text-xl font-display font-bold text-white">{powerBall}</span>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
+                <span className="text-lg sm:text-xl font-display font-bold text-white">{powerBall}</span>
               </div>
             </div>
           </Card>
@@ -217,8 +217,8 @@ const ValidateResults = () => {
             </Card>
             <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-4 text-center">
               <div className="text-2xl mb-1">📊</div>
-              <div className="text-xl font-display font-bold">{numbers.filter(n => n <= 35).length}/{numbers.length}</div>
-              <div className="text-xs text-muted-foreground">Low Numbers (≤35)</div>
+              <div className="text-xl font-display font-bold">{numbers.filter(n => n <= 17).length}/{numbers.length}</div>
+              <div className="text-xs text-muted-foreground">Low Numbers (≤17)</div>
             </Card>
           </div>
 

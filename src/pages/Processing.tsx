@@ -9,12 +9,12 @@ const Processing = () => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [drawingsAnalyzed] = useState(() => Math.floor(Math.random() * (1800 - 1200 + 1)) + 1200);
+  const [drawingsAnalyzed] = useState(() => Math.floor(Math.random() * (1200 - 800 + 1)) + 800);
 
   const steps = [
     "Connecting to secure database...",
-    `Analyzing ${drawingsAnalyzed.toLocaleString()} historical draws from 2010 to present...`,
-    "Finding confluence patterns between 2010 to present period...",
+    `Analyzing ${drawingsAnalyzed.toLocaleString()} historical draws...`,
+    "Finding confluence patterns in Powerball Australia history...",
     "Detecting micro-repetition sequences in recent draws...",
     "Calculating frequency distributions and probability matrices...",
     "Identifying hot numbers and cold number cycles...",
@@ -62,7 +62,7 @@ const Processing = () => {
 
   const selectedDay = localStorage.getItem("selectedDay");
   const selectedDate = localStorage.getItem("selectedDate");
-  const formattedDate = selectedDate ? new Date(selectedDate).toLocaleDateString("en-GB", { 
+  const formattedDate = selectedDate ? new Date(selectedDate).toLocaleDateString("en-AU", { 
     day: "2-digit", 
     month: "2-digit", 
     year: "2-digit" 
