@@ -36,14 +36,15 @@ const Database = () => {
         const parsed = lines
           .filter(line => line.trim())
           .map(line => {
-            const parts = line.split(',');
-            if (parts.length >= 3) {
-              const nums = parts[1].trim().split(' ');
+            const parts = line.split(';');
+            if (parts.length >= 4) {
+              // Format: Concurso;Data;Números Sorteados;Powerball;Total de Ganhadores
+              const nums = parts[2].trim().split(',').map(n => n.trim()).filter(n => n);
               return {
-                date: parts[0],
-                numbers: nums.slice(0, 7).join(' '),
-                powerball: nums[7] || '',
-                multiplier: parts[2]
+                date: parts[1].trim(),
+                numbers: nums.join(' '),
+                powerball: parts[3].trim(),
+                multiplier: parts[4] || ''
               };
             }
             return null;
