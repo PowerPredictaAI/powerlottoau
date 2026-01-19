@@ -8,11 +8,11 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Euro Lotto AI Brand Colors */
+    /* Power Predicta AI Brand Colors */
     --primary-blue: 214 100% 32%;
     --primary-blue-light: 214 100% 50%;
     --primary-blue-ring: 214 100% 60%;
-    --red-cta: 351 89% 53%;
+    --light-blue-cta: 199 89% 48%;
     --green-success: 142 71% 45%;
     --gold-ai: 45 93% 49%;
     
@@ -150,7 +150,7 @@ All colors MUST be HSL.
   }
   
   .logo-ai {
-    color: hsl(var(--red-cta));
+    color: hsl(var(--light-blue-cta));
   }
   
   .ai-number {
