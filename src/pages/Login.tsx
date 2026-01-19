@@ -79,7 +79,7 @@ const Login = () => {
                   value={email}
                   onChange={(e) => handleEmailChange(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && isValidEmail && handleAccess()}
-                  className={`h-12 bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder:text-white/50 ${emailError ? "border-red-ai" : ""}`}
+                  className={`h-12 bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder:text-white/50 ${emailError ? "border-destructive" : ""}`}
                 />
                 {emailError && (
                   <p className="text-xs text-red-300 mt-1.5 ml-1">{emailError}</p>
