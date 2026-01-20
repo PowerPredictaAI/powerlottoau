@@ -134,13 +134,13 @@ const SelectDay = () => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 text-red-cta mb-4">
               <Calendar className="h-6 w-6" />
-              <span className="font-display font-semibold">Select the drawing day</span>
+              <span className="font-display font-semibold">Select Your Draw</span>
             </div>
             <h2 className="text-3xl font-display font-bold mb-2">
-              Choose Your Draw Date
+              Powerball Australia Draws
             </h2>
             <p className="text-muted-foreground">
-              Powerball Australia draws every Thursday
+              Every Thursday at 8:30 PM AEST • Select a draw to view AI-generated numbers
             </p>
           </div>
 
