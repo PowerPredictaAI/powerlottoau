@@ -128,7 +128,7 @@ const SelectDay = () => {
         <div className="max-w-5xl mx-auto px-6 py-12">
           <Button variant="ghost" onClick={handleBack} className="mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Lottery Selection
+            Back to Analysis Selection
           </Button>
 
           <div className="text-center mb-12">
