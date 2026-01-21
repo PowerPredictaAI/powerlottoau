@@ -35,28 +35,29 @@ const SelectDay = () => {
     // Powerball Australia draws: Thursday (4)
     const drawDay = 4; // Thursday
     
-    // Use Australian Eastern Time
     const now = new Date();
-    const auTimeString = now.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' });
-    const auTime = new Date(auTimeString);
-    
-    const currentDay = auTime.getDay();
-    const currentHour = auTime.getHours();
+    const currentDay = now.getDay();
+    const currentHour = now.getHours();
     
     const allDates: { day: string; date: Date }[] = [];
     
     // Calculate days until next Thursday
     let daysToAdd = (drawDay - currentDay + 7) % 7;
     
-    // If today is Thursday and it's past 20:30 AEST (draw time), go to next week
+    // If today is Thursday and it's past 21:00 (draw already happened), go to next week
     if (daysToAdd === 0 && currentHour >= 21) {
+      daysToAdd = 7;
+    }
+    
+    // If it's not Thursday, ensure we get the next Thursday
+    if (daysToAdd === 0 && currentDay !== drawDay) {
       daysToAdd = 7;
     }
     
     // Generate next 4 Thursdays
     for (let i = 0; i < 4; i++) {
-      const date = new Date(auTime);
-      date.setDate(auTime.getDate() + daysToAdd + i * 7);
+      const date = new Date(now);
+      date.setDate(now.getDate() + daysToAdd + i * 7);
       date.setHours(20, 30, 0, 0); // Draw time: 8:30 PM AEST
       allDates.push({ day: "Thursday", date });
     }
@@ -147,9 +148,7 @@ const SelectDay = () => {
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             {upcomingDates.map(({ day, date }, idx) => {
               const now = new Date();
-              const auTimeString = now.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' });
-              const auTime = new Date(auTimeString);
-              const isToday = date.toDateString() === auTime.toDateString();
+              const isToday = date.toDateString() === now.toDateString();
               const isNextDraw = idx === 0;
               
               return (
