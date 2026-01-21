@@ -344,8 +344,8 @@ const Results = () => {
 
                   <span className="text-xl sm:text-2xl text-white mx-1">+</span>
                   
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-white/50">
-                    <span className="text-lg sm:text-xl font-display font-bold text-charcoal">{game.powerBall}</span>
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-red-500 flex items-center justify-center shadow-lg ring-2 ring-red-400">
+                    <span className="text-lg sm:text-xl font-display font-bold text-white">{game.powerBall}</span>
                   </div>
                 </div>
               </Card>
