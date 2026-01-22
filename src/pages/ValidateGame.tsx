@@ -174,10 +174,10 @@ const ValidateGame = () => {
                   </div>
                 ))}
 
-                {selectedPowerBall !== null && (
+              {selectedPowerBall !== null && (
                   <>
                     <span className="text-2xl text-muted-foreground mx-1 sm:mx-2">+</span>
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-red-cta to-red-cta/70 flex items-center justify-center shadow-glow-gold ring-2 ring-red-cta/30">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-500 flex items-center justify-center shadow-lg ring-2 ring-red-500/30">
                       <span className="text-lg sm:text-xl font-display font-bold text-white">{selectedPowerBall}</span>
                     </div>
                   </>
