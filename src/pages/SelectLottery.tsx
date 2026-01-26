@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, LogOut, Database, Sparkles, Calendar, Save, X } from "lucide-react";
+import { Star, LogOut, Database, Sparkles, Calendar, Save, X, FileSpreadsheet } from "lucide-react";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
@@ -229,6 +229,24 @@ const SelectLottery = () => {
             >
               <Database className="h-4 w-4" />
               <span className="hidden sm:inline">Database</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = '/PowerPredictaAI_Pro_Tracker_AU.xlsx';
+                link.download = 'PowerPredictaAI_Pro_Tracker_AU.xlsx';
+                link.click();
+                toast({
+                  title: "Pro Tracker",
+                  description: "Spreadsheet downloaded successfully!",
+                });
+              }}
+              className="gap-2"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              <span className="hidden sm:inline">Pro-tracker</span>
             </Button>
             <span className="text-sm text-white/70 hidden sm:inline">{email}</span>
             <Button
