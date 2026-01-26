@@ -111,7 +111,7 @@ const Login = () => {
                 <div className="p-1.5 sm:p-2 rounded-lg bg-gold-ai/20 backdrop-blur-sm flex-shrink-0">
                   <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-gold-ai" />
                 </div>
-                <span className="text-white/90">✨ Generate numbers through patterns of 1000+ analyzed games</span>
+                <span className="text-white/90">✨ Generate numbers through patterns of 1500+ analyzed games</span>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
                 <div className="p-1.5 sm:p-2 rounded-lg bg-primary-blue/20 backdrop-blur-sm flex-shrink-0">
