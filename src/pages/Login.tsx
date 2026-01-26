@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Target, BarChart2, Zap, Lightbulb, Database, Sparkles } from "lucide-react";
 import Logo from "@/components/Logo";
+import Footer from "@/components/Footer";
 import bgImage from "@/assets/powerball-bg.jpg";
 import { z } from "zod";
 
@@ -147,6 +148,7 @@ const Login = () => {
           </p>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

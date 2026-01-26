@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, LogOut, Sparkles } from "lucide-react";
 import Logo from "@/components/Logo";
+import Footer from "@/components/Footer";
 import bgImage from "@/assets/powerball-bg.jpg";
 
 const ValidateGame = () => {
@@ -197,6 +198,7 @@ const ValidateGame = () => {
           </Button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
