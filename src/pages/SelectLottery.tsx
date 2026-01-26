@@ -399,7 +399,7 @@ const SelectLottery = () => {
                     
                     <div>
                       <p className="text-sm text-muted-foreground mb-2">Powerball</p>
-                      <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-cta text-white font-bold shadow-lg">
+                      <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-500 text-white font-bold shadow-lg">
                         {generatedNumbers.powerBall}
                       </span>
                     </div>
@@ -432,7 +432,7 @@ const SelectLottery = () => {
                       <div className="flex gap-1.5 flex-wrap">
                         {mostFrequentPowerBall.map((item, idx) => (
                           <div key={idx} className="flex flex-col items-center">
-                            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-cta/10 text-red-cta font-bold text-sm border border-red-cta/30">
+                            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-500 text-white font-bold text-sm shadow-lg">
                               {item.number}
                             </span>
                             <span className="text-[10px] text-muted-foreground mt-0.5">{item.count}x</span>

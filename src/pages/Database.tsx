@@ -309,7 +309,7 @@ const Database = () => {
                   {generatedNumbers.luckyStars.map((star, idx) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-cta text-white font-bold text-lg shadow-lg"
+                      className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white font-bold text-lg shadow-lg"
                     >
                       {star}
                     </span>
@@ -403,7 +403,7 @@ const Database = () => {
                         </div>
                       </TableCell>
                       <TableCell className="px-2 sm:px-4 py-2 sm:py-3">
-                        <span className="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-cta/10 text-red-cta font-bold text-xs sm:text-sm">
+                        <span className="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-500 text-white font-bold text-xs sm:text-sm">
                           {record.powerball}
                         </span>
                       </TableCell>
