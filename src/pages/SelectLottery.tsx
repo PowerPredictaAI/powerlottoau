@@ -5,6 +5,7 @@ import { Star, LogOut, Database, Sparkles, Calendar, Save, X } from "lucide-reac
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
+import Footer from "@/components/Footer";
 import bgImage from "@/assets/powerball-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -533,6 +534,7 @@ const SelectLottery = () => {
         </Dialog>
       </div>
       </div>
+      <Footer />
     </div>
   );
 };

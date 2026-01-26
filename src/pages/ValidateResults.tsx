@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, LogOut, Sparkles, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import Logo from "@/components/Logo";
+import Footer from "@/components/Footer";
 import bgImage from "@/assets/powerball-bg.jpg";
 
 const ValidateResults = () => {
@@ -247,6 +248,7 @@ const ValidateResults = () => {
           </p>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
