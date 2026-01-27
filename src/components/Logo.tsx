@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import powerLottoLogo from "@/assets/power-lotto-logo.png";
+import powerPredictaLogo from "@/assets/power-predicta-logo.png";
 
 interface LogoProps {
   className?: string;
@@ -17,7 +17,7 @@ const Logo = ({ className, size = "md" }: LogoProps) => {
   return (
     <div className={cn("flex items-center justify-center", className)}>
       <img 
-        src={powerLottoLogo} 
+        src={powerPredictaLogo} 
         alt="Power Predicta AI"
         className={cn(sizeClasses[size])}
       />
