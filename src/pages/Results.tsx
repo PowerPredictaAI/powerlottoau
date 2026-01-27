@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, LogOut, Sparkles, Star, Download, Copy } from "lucide-react";
+import { ArrowLeft, LogOut, Sparkles, Star, Download, Copy, FileSpreadsheet } from "lucide-react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
 import bgImage from "@/assets/money-bg.jpg";
@@ -199,6 +199,15 @@ const Results = () => {
               </p>
             </div>
           <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open("https://docs.google.com/spreadsheets/d/1Y1IkMs5v47x6ad0MarfFBE3zbUbUcCeG/edit?gid=1048846293#gid=1048846293", "_blank")}
+              className="gap-2"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              <span className="hidden sm:inline">Pro-tracker</span>
+            </Button>
             <span className="text-sm text-white/70 hidden sm:inline">{email}</span>
             <Button
               variant="ghost"
@@ -216,9 +225,9 @@ const Results = () => {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Button
-          variant="ghost"
+          variant="outline"
           onClick={handleBack}
-          className="mb-6"
+          className="mb-6 bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white font-semibold"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
