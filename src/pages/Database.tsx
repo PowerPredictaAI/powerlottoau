@@ -230,8 +230,12 @@ const Database = () => {
               <DatabaseIcon className="h-6 w-6 sm:h-8 sm:w-8 text-primary-blue" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-display font-bold">Powerball Australia History</h1>
-              <p className="text-sm text-muted-foreground">Complete historical database of all draws</p>
+              <h1 className="text-2xl sm:text-3xl font-display font-bold">
+                <span className="text-white">POWERBALL </span>
+                <span className="text-red-500">AUSTRALIA</span>
+                <span className="text-white"> HISTORY</span>
+              </h1>
+              <p className="text-sm text-white/70">Complete historical database of all draws</p>
             </div>
           </div>
 
