@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ArrowLeft, Search, Database as DatabaseIcon, Download, Sparkles, Save, Calendar, X } from "lucide-react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
+import bgImage from "@/assets/money-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -183,7 +184,16 @@ const Database = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60" />
+      
+      <div className="relative z-10">
       {/* Header */}
       <header className="bg-charcoal border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
@@ -416,6 +426,7 @@ const Database = () => {
         </Card>
       </div>
       <Footer />
+      </div>
     </div>
   );
 };

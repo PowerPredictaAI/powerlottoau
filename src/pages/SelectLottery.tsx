@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
 import Footer from "@/components/Footer";
-import bgImage from "@/assets/powerball-bg.jpg";
+import bgImage from "@/assets/money-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -213,8 +213,8 @@ const SelectLottery = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      {/* White Overlay */}
-      <div className="absolute inset-0 bg-white/90 dark:bg-charcoal/90" />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10">
       {/* Header */}

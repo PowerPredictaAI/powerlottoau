@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Loader2, Lock } from "lucide-react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
-import bgImage from "@/assets/powerball-bg.jpg";
+import bgImage from "@/assets/money-bg.jpg";
 
 const Processing = () => {
   const navigate = useNavigate();
@@ -76,8 +76,8 @@ const Processing = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      {/* White Overlay */}
-      <div className="absolute inset-0 bg-white/90 dark:bg-charcoal/90" />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-2xl">

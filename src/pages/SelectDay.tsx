@@ -6,7 +6,7 @@ import { Calendar, LogOut, ArrowLeft, Star, Database } from "lucide-react";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
-import bgImage from "@/assets/powerball-bg.jpg";
+import bgImage from "@/assets/money-bg.jpg";
 
 const SelectDay = () => {
   const navigate = useNavigate();
@@ -89,8 +89,8 @@ const SelectDay = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      {/* White Overlay */}
-      <div className="absolute inset-0 bg-white/90 dark:bg-charcoal/90" />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10">
         {/* Header */}

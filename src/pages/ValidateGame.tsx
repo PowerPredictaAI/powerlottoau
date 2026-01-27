@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft, LogOut, Sparkles } from "lucide-react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
-import bgImage from "@/assets/powerball-bg.jpg";
+import bgImage from "@/assets/money-bg.jpg";
 
 const ValidateGame = () => {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ const ValidateGame = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      <div className="absolute inset-0 bg-white/90 dark:bg-charcoal/90" />
+      <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10">
         <header className="bg-charcoal dark:bg-charcoal border-b border-border/50">
