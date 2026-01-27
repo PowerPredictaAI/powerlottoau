@@ -258,9 +258,11 @@ const SelectLottery = () => {
       <div className="max-w-4xl mx-auto px-6 py-6 sm:py-12">
         <div className="text-center mb-6 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl font-display font-bold mb-2">
-            Powerball Australia AI
+            <span className="text-white">POWERBALL </span>
+            <span className="text-red-500">AUSTRALIA</span>
+            <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-light-blue-cta to-primary-blue rounded text-white text-lg sm:text-xl align-middle">AI</span>
           </h2>
-          <p className="text-sm sm:text-base text-muted-foreground px-4">
+          <p className="text-sm sm:text-base text-white/70 px-4">
             Generate AI-powered numbers for Powerball Australia
           </p>
         </div>
