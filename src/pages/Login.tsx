@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Target, BarChart2, Zap, Lightbulb, Database, Sparkles } from "lucide-react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
-import bgImage from "@/assets/powerball-bg.jpg";
+import bgImage from "@/assets/money-bg.jpg";
 import { z } from "zod";
 
 const emailSchema = z.string().email("Please enter the email used at time of purchase");
@@ -53,8 +53,8 @@ const Login = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      {/* Dark Overlay - increased opacity */}
-      <div className="absolute inset-0 bg-charcoal/95 dark:bg-charcoal/95" />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60" />
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">

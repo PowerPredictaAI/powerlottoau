@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft, LogOut, Sparkles, Star, Download, Copy } from "lucide-react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
-import bgImage from "@/assets/powerball-bg.jpg";
+import bgImage from "@/assets/money-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { parsePowerBallDatabase, calculateFrequencies, calculateGameScore, getScoreRating, type GameWithScore } from "@/utils/powerballScoring";
 
@@ -185,8 +185,8 @@ const Results = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
-      {/* White Overlay */}
-      <div className="absolute inset-0 bg-white/90 dark:bg-charcoal/90" />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10">
       {/* Header */}
