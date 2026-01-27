@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, LogOut, Sparkles, FileSpreadsheet } from "lucide-react";
+import { ArrowLeft, LogOut, Sparkles, FileSpreadsheet, Database } from "lucide-react";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
 import bgImage from "@/assets/money-bg.jpg";
@@ -75,6 +75,15 @@ const ValidateGame = () => {
               </p>
             </div>
             <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/database")}
+                className="gap-2"
+              >
+                <Database className="h-4 w-4" />
+                <span className="hidden sm:inline">Database</span>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
