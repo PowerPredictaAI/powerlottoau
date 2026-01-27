@@ -151,10 +151,12 @@ const SelectDay = () => {
               <Calendar className="h-6 w-6" />
               <span className="font-display font-semibold">Select Your Draw</span>
             </div>
-            <h2 className="text-3xl font-display font-bold mb-2">
-              Powerball Australia Draws
+            <h2 className="text-2xl sm:text-3xl font-display font-bold mb-2">
+              <span className="text-white">POWERBALL </span>
+              <span className="text-red-500">AUSTRALIA</span>
+              <span className="text-white"> DRAWS</span>
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-white/70">
               Every Thursday at 8:30 PM AEST • Select a draw to view AI-generated numbers
             </p>
           </div>
