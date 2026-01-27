@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, LogOut, Database, Sparkles, Calendar, Save, X } from "lucide-react";
+import { Star, LogOut, Database, Sparkles, Calendar, Save, X, FileSpreadsheet } from "lucide-react";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
@@ -230,6 +230,15 @@ const SelectLottery = () => {
             >
               <Database className="h-4 w-4" />
               <span className="hidden sm:inline">Database</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open("https://docs.google.com/spreadsheets/d/1Y1IkMs5v47x6ad0MarfFBE3zbUbUcCeG/edit?gid=1048846293#gid=1048846293", "_blank")}
+              className="gap-2"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              <span className="hidden sm:inline">Pro-tracker</span>
             </Button>
             <span className="text-sm text-white/70 hidden sm:inline">{email}</span>
             <Button
