@@ -37,7 +37,7 @@ const SmartTipsPopup = ({ isOpen, onClose }: SmartTipsPopupProps) => {
               <span className="font-bold text-primary-blue-light">2. Don't expect to hit it right away</span>
             </p>
             <p className="text-white/60 text-sm mt-1 leading-relaxed">
-              This is still a lottery. Even with data analysis, you may not see results on your first tickets – and that's completely normal. Use Power Predicta AI for several weeks or months and then compare your results to when you were just guessing. The goal is to help you build a more consistent, data-driven history over time, not promise instant wins.
+              This is still a lottery. Even with data analysis, you may not see results on your first tickets – and that's completely normal. Use Power Lotto AI for several weeks or months and then compare your results to when you were just guessing. The goal is to help you build a more consistent, data-driven history over time, not promise instant wins.
             </p>
           </div>
 
@@ -55,14 +55,14 @@ const SmartTipsPopup = ({ isOpen, onClose }: SmartTipsPopupProps) => {
               <span className="font-bold text-primary-blue-light">4. Play responsibly</span>
             </p>
             <p className="text-white/60 text-sm mt-1 leading-relaxed">
-              Only play with money you can afford to lose. Power Predicta AI is a tool for analysis and entertainment, not a guarantee of financial return.
+              Only play with money you can afford to lose. Power Lotto AI is a tool for analysis and entertainment, not a guarantee of financial return.
             </p>
           </div>
         </div>
 
         {/* Disclaimer */}
         <p className="text-xs text-white/40 mt-5 pt-4 border-t border-white/10 leading-relaxed">
-          Disclaimer: Power Predicta AI does not guarantee prizes or earnings. All outcomes depend on random draws and your own choices.
+          Disclaimer: Power Lotto AI does not guarantee prizes or earnings. All outcomes depend on random draws and your own choices.
         </p>
       </DialogContent>
     </Dialog>

@@ -481,7 +481,7 @@ const SelectLottery = () => {
 
         {/* Footer Disclaimer */}
         <div className="mt-12 text-center text-xs text-muted-foreground max-w-2xl mx-auto space-y-2">
-          <p>Power Predicta AI is an independent analytics tool. Not affiliated with The Lott or any official Australian lottery operator. 18+. Educational use only. No guarantee of winnings.</p>
+          <p>Power Lotto AI is an independent analytics tool. Not affiliated with The Lott or any official Australian lottery operator. 18+. Educational use only. No guarantee of winnings.</p>
           <button 
             onClick={() => setIsLegalDialogOpen(true)}
             className="text-muted-foreground hover:text-foreground underline transition-colors"
