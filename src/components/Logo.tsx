@@ -36,7 +36,7 @@ const Logo = ({ className, size = "md" }: LogoProps) => {
       </span>
       <div className="flex items-center gap-2">
         <span className={cn("font-display font-black text-red-500 tracking-tight", sizeClasses[size].lotto)}>
-          LOTTO
+          PREDICTA
         </span>
         <span className={cn("bg-red-500 text-white font-bold rounded", sizeClasses[size].badge)}>
           AI
