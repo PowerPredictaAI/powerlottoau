@@ -148,7 +148,7 @@ const Results = () => {
     const bonusGames = games.slice(3, 6);
     
     let content = `Powerball Australia AI - Generated Numbers\n`;
-    content += `PowerLotto AI\n`;
+    content += `PowerPredicta AI\n`;
     content += `${selectedDay} - ${formattedDate}\n\n`;
     
     content += `MAIN GAMES:\n`;
@@ -472,7 +472,7 @@ const Results = () => {
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground text-center mt-8 px-4">
-          Power Lotto AI is an independent analytics tool. Not affiliated with The Lott or any official Australian lottery operator. 18+. Educational use only. No guarantee of winnings.
+          Power Predicta AI is an independent analytics tool. Not affiliated with The Lott or any official Australian lottery operator. 18+. Educational use only. No guarantee of winnings.
         </p>
       </div>
       </div>
