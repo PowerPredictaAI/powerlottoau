@@ -353,7 +353,7 @@ const SelectLottery = () => {
                         mode="single"
                         selected={startDate}
                         onSelect={setStartDate}
-                        disabled={(date) => date > new Date() || date < new Date("2010-01-01") || date.getDay() !== 4}
+                        disabled={(date) => date < new Date("2010-01-01") || date.getDay() !== 4}
                         initialFocus
                         className="pointer-events-auto"
                       />
@@ -381,7 +381,7 @@ const SelectLottery = () => {
                         mode="single"
                         selected={endDate}
                         onSelect={setEndDate}
-                        disabled={(date) => date > new Date() || date < new Date("2010-01-01") || date.getDay() !== 4 || (startDate ? date < startDate : false)}
+                        disabled={(date) => date < new Date("2010-01-01") || date.getDay() !== 4 || (startDate ? date < startDate : false)}
                         initialFocus
                         className="pointer-events-auto"
                       />
