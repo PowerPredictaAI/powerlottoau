@@ -24,7 +24,7 @@ const Database = () => {
   const [records, setRecords] = useState<DrawRecord[]>([]);
   const [filteredRecords, setFilteredRecords] = useState<DrawRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedYear, setSelectedYear] = useState<string>("all");
+  const [selectedYear, setSelectedYear] = useState<string>("2026");
   const [loading, setLoading] = useState(true);
   const [generatedNumbers, setGeneratedNumbers] = useState<{ mainNumbers: number[], luckyStars: number[] } | null>(null);
   const { toast } = useToast();
