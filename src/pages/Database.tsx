@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface DrawRecord {
+  drawNumber: string;
   date: string;
   numbers: string;
   powerball: string;
@@ -43,6 +44,7 @@ const Database = () => {
               // Format: Concurso;Data;Números Sorteados;Powerball;Total de Ganhadores
               const nums = parts[2].trim().split(',').map(n => n.trim()).filter(n => n);
               return {
+                drawNumber: parts[0].trim(),
                 date: parts[1].trim(),
                 numbers: nums.join(' '),
                 powerball: parts[3].trim(),
@@ -395,14 +397,16 @@ const Database = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">
-                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Date</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Main Numbers (7)</TableHead>
-                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Powerball</TableHead>
+                    <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Draw #</TableHead>
+                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Date</TableHead>
+                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Main Numbers (7)</TableHead>
+                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Powerball</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredRecords.map((record, idx) => (
                     <TableRow key={idx} className="hover:bg-muted/30">
+                      <TableCell className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 font-bold text-primary-blue">#{record.drawNumber}</TableCell>
                       <TableCell className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">{record.date}</TableCell>
                       <TableCell className="px-2 sm:px-4 py-2 sm:py-3">
                         <div className="flex gap-0.5 sm:gap-1 flex-wrap">
