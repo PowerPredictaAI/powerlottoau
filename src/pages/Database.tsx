@@ -54,7 +54,7 @@ const Database = () => {
             return null;
           })
           .filter((record): record is DrawRecord => record !== null)
-          .reverse(); // Most recent first
+          .sort((a, b) => parseInt(b.drawNumber) - parseInt(a.drawNumber));
 
         setRecords(parsed);
         setFilteredRecords(parsed);
