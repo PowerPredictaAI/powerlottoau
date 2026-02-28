@@ -73,13 +73,12 @@ const Database = () => {
 
     if (searchTerm) {
       filtered = filtered.filter(record => 
+        record.drawNumber.includes(searchTerm) ||
         record.date.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.numbers.includes(searchTerm) ||
         record.powerball.includes(searchTerm)
       );
-    }
-
-    if (selectedYear !== "all") {
+    } else if (selectedYear !== "all") {
       filtered = filtered.filter(record => record.date.includes(selectedYear));
     }
 
