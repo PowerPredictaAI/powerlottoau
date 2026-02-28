@@ -426,7 +426,7 @@ const Database = () => {
                         </span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gold-ai">
-                        {record.totalWinners === '0' ? '—' : record.totalWinners}
+                        {record.totalWinners === '0' || record.totalWinners === '-' ? '—' : parseInt(record.totalWinners.replace(/[,.\s]/g, ''), 10).toLocaleString('en-AU')}
                       </TableCell>
                     </TableRow>
                   ))}
