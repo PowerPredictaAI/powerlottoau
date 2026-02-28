@@ -16,7 +16,7 @@ interface DrawRecord {
   date: string;
   numbers: string;
   powerball: string;
-  multiplier: string;
+  totalWinners: string;
 }
 
 const Database = () => {
@@ -48,7 +48,7 @@ const Database = () => {
                 date: parts[1].trim(),
                 numbers: nums.join(' '),
                 powerball: parts[3].trim(),
-                multiplier: parts[4] || ''
+                totalWinners: parts[4]?.trim() || '0'
               };
             }
             return null;
@@ -400,6 +400,7 @@ const Database = () => {
                      <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Date</TableHead>
                      <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Main Numbers (7)</TableHead>
                      <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Powerball</TableHead>
+                     <TableHead className="font-bold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3">Total Winners</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -423,6 +424,9 @@ const Database = () => {
                         <span className="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-500 text-white font-bold text-xs sm:text-sm">
                           {record.powerball}
                         </span>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gold-ai">
+                        {record.totalWinners === '0' ? '—' : record.totalWinners}
                       </TableCell>
                     </TableRow>
                   ))}
