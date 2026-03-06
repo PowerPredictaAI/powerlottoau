@@ -165,7 +165,7 @@ const ValidateGame = () => {
               <h1 className="text-3xl font-display font-bold">Validate Your Game</h1>
             </div>
             <p className="text-muted-foreground">
-              Select your {config.name} numbers and let AI analyze your chances
+              Select your {config.name} numbers and let AI analyse your chances
             </p>
           </div>
 
