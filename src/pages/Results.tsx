@@ -481,7 +481,7 @@ const Results = () => {
             <Card className="glass-panel dark:glass-panel glass-panel-light border-border p-4 text-center">
               <div className="text-3xl mb-1">🏆</div>
               <div className="text-2xl font-display font-bold">1,500+</div>
-              <div className="text-xs text-muted-foreground">Drawings analyzed</div>
+              <div className="text-xs text-muted-foreground">Drawings analysed</div>
             </Card>
           </div>
 

@@ -25,7 +25,7 @@ const Processing = () => {
 
   const steps = [
     "Connecting to secure database...",
-    `Analyzing ${drawingsAnalyzed.toLocaleString()} historical draws...`,
+    `Analysing ${drawingsAnalysed.toLocaleString()} historical draws...`,
     `Finding confluence patterns in ${lotteryName} history...`,
     "Detecting micro-repetition sequences in recent draws...",
     "Calculating frequency distributions and probability matrices...",
