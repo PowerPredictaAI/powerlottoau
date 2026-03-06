@@ -32,16 +32,20 @@ const Logo = ({ className, size = "md", lotteryType }: LogoProps) => {
     },
   };
 
+  const isPowerball = lotteryType === "powerball";
+  const lottoColor = isPowerball ? "text-primary" : "text-red-500";
+  const badgeBg = isPowerball ? "bg-primary" : "bg-red-500";
+
   return (
     <div className={cn("flex flex-col items-center justify-center", className)}>
       <span className={cn("font-display font-black text-white tracking-tight", sizeClasses[size].power)}>
         POWER
       </span>
       <div className="flex items-center gap-2">
-        <span className={cn("font-display font-black text-red-500 tracking-tight", sizeClasses[size].lotto)}>
+        <span className={cn("font-display font-black tracking-tight", lottoColor, sizeClasses[size].lotto)}>
           LOTTO
         </span>
-        <span className={cn("bg-red-500 text-white font-bold rounded", sizeClasses[size].badge)}>
+        <span className={cn("text-white font-bold rounded", badgeBg, sizeClasses[size].badge)}>
           AI
         </span>
       </div>
