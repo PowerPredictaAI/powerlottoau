@@ -359,7 +359,7 @@ const SelectLottery = () => {
                         handleSelectLottery(key);
                       }}
                     >
-                      SELECT {config.name.toUpperCase()}
+                      SELECT {key === "powerball" ? "POWERBALL" : config.name.toUpperCase()}
                     </Button>
                   </div>
                 </Card>
