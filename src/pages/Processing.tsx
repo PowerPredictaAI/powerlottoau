@@ -6,16 +6,27 @@ import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
 import bgImage from "@/assets/money-bg.jpg";
 
+type LotteryType = "powerball" | "saturday-lotto" | "oz-lotto";
+
+const LOTTERY_NAMES: Record<LotteryType, string> = {
+  powerball: "Powerball Australia",
+  "saturday-lotto": "Saturday Lotto",
+  "oz-lotto": "Oz Lotto",
+};
+
 const Processing = () => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [drawingsAnalyzed] = useState(() => Math.floor(Math.random() * (1200 - 800 + 1)) + 800);
 
+  const lotteryType = (localStorage.getItem("selectedLottery") as LotteryType) || "powerball";
+  const lotteryName = LOTTERY_NAMES[lotteryType];
+
   const steps = [
     "Connecting to secure database...",
     `Analyzing ${drawingsAnalyzed.toLocaleString()} historical draws...`,
-    "Finding confluence patterns in Powerball Australia history...",
+    `Finding confluence patterns in ${lotteryName} history...`,
     "Detecting micro-repetition sequences in recent draws...",
     "Calculating frequency distributions and probability matrices...",
     "Identifying hot numbers and cold number cycles...",
@@ -71,12 +82,7 @@ const Processing = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      />
-      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${bgImage})` }} />
       <div className="absolute inset-0 bg-black/60" />
       
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
@@ -86,7 +92,6 @@ const Processing = () => {
         </div>
         
         <div className="glass-panel dark:glass-panel glass-panel-light rounded-xl p-8 shadow-elevated">
-          {/* Badge */}
           <div className="flex justify-center mb-6">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-ai/10 border border-gold-ai/30">
               <Loader2 className="h-4 w-4 text-gold-ai animate-spin" />
@@ -94,15 +99,13 @@ const Processing = () => {
             </div>
           </div>
 
-          {/* Title */}
           <h1 className="text-2xl font-display font-bold text-center mb-2">
-            Generating numbers for {selectedDay}
+            Generating {lotteryName} numbers for {selectedDay}
           </h1>
           <p className="text-muted-foreground text-center mb-8">
             Drawing on {formattedDate}
           </p>
 
-          {/* Animated Circle */}
           <div className="flex justify-center mb-8">
             <div className="relative">
               <div className="w-32 h-32 rounded-full border-4 border-border flex items-center justify-center">
@@ -112,7 +115,6 @@ const Processing = () => {
             </div>
           </div>
 
-          {/* Progress */}
           <div className="mb-8">
             <div className="flex justify-center mb-4">
               <span className="text-3xl font-display font-bold">{Math.round(progress)}%</span>
@@ -120,7 +122,6 @@ const Processing = () => {
             <Progress value={progress} className="h-2" />
           </div>
 
-          {/* Steps */}
           <div className="space-y-3 mb-6">
             {steps.map((step, index) => {
               const isComplete = index < currentStep;
@@ -154,7 +155,6 @@ const Processing = () => {
             })}
           </div>
 
-          {/* Security Notice */}
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <Lock className="h-3 w-3" />
             <span>Secure and encrypted processing</span>

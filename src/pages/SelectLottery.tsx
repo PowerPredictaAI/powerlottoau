@@ -52,7 +52,7 @@ const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     drawDayName: "Thursday",
     csvFile: "/database-powerball.csv",
     rulesText: ["7 Numbers (1–35)", "1 Powerball (1–20)"],
-    drawNight: "Every Thursday",
+    drawNight: "Thursdays",
     iconColor: "bg-gradient-to-br from-primary-blue to-primary-blue-light",
     gradientClass: "bg-gradient-to-r from-primary-blue to-primary-blue-light",
     hoverBorderClass: "hover:border-primary-blue/50",
@@ -84,7 +84,7 @@ const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     drawDayName: "Tuesday",
     csvFile: "/database-ozlotto.csv",
     rulesText: ["7 Numbers (1–47)"],
-    drawNight: "Every Tuesday",
+    drawNight: "Tuesdays",
     iconColor: "bg-gradient-to-br from-green-500 to-yellow-500",
     gradientClass: "bg-gradient-to-r from-green-600 to-yellow-500",
     hoverBorderClass: "hover:border-green-500/50",
@@ -359,7 +359,7 @@ const SelectLottery = () => {
                         handleSelectLottery(key);
                       }}
                     >
-                      SELECT {config.name.toUpperCase()}
+                      SELECT {key === "powerball" ? "POWERBALL" : config.name.toUpperCase()}
                     </Button>
                   </div>
                 </Card>
