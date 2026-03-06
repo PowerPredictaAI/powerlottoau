@@ -254,7 +254,7 @@ const ValidateGame = () => {
 
           <Button onClick={handleAnalyze} disabled={!isAnalyzeEnabled} size="lg" className="w-full">
             <Sparkles className="h-5 w-5 mr-2" />
-            ANALYZE MY NUMBERS
+            ANALYSE MY NUMBERS
           </Button>
         </div>
       </div>
