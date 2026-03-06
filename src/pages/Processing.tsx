@@ -18,14 +18,14 @@ const Processing = () => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [drawingsAnalyzed] = useState(() => Math.floor(Math.random() * (1200 - 800 + 1)) + 800);
+  const [drawingsAnalysed] = useState(() => Math.floor(Math.random() * (1200 - 800 + 1)) + 800);
 
   const lotteryType = (localStorage.getItem("selectedLottery") as LotteryType) || "powerball";
   const lotteryName = LOTTERY_NAMES[lotteryType];
 
   const steps = [
     "Connecting to secure database...",
-    `Analyzing ${drawingsAnalyzed.toLocaleString()} historical draws...`,
+    `Analysing ${drawingsAnalysed.toLocaleString()} historical draws...`,
     `Finding confluence patterns in ${lotteryName} history...`,
     "Detecting micro-repetition sequences in recent draws...",
     "Calculating frequency distributions and probability matrices...",
