@@ -223,19 +223,25 @@ const Results = () => {
           generatedGames.push({ mainNumbers, bonusNumbers, score: normalizedScore });
         }
 
-        // Distribute scores for variety
-        const targetScores = [91.5, 86.5, 83.0, 79.5, 76.0, 72.5];
+        // Bonus games (purple) get HIGHER scores, main games (white) get LOWER scores
+        const mainScores = [78.5, 76.0, 72.5];   // GOOD / GOOD / AVERAGE
+        const bonusScores = [91.5, 86.5, 83.0];   // EXCELLENT / VERY GOOD / VERY GOOD
+
         generatedGames.sort((a, b) => b.score - a.score);
+
+        // First 3 = main games (lower scores), last 3 = bonus games (higher scores)
         const finalGames = generatedGames.map((game, index) => {
-          const baseScore = targetScores[index];
+          const scores = index < 3 ? mainScores : bonusScores;
+          const scoreIdx = index < 3 ? index : index - 3;
+          const baseScore = scores[scoreIdx];
           const variation = (Math.random() - 0.5) * 2;
           return { ...game, score: Math.max(70, Math.min(92.3, baseScore + variation)) };
         });
 
-        if (Math.max(...finalGames.map(g => g.score)) < 88) {
-          finalGames[0].score = 89 + Math.random() * 3.3;
+        // Ensure at least one bonus game is EXCELLENT (>= 88)
+        if (Math.max(...finalGames.slice(3).map(g => g.score)) < 88) {
+          finalGames[3].score = 89 + Math.random() * 3.3;
         }
-        finalGames.sort((a, b) => b.score - a.score);
 
         setGames(finalGames);
       } catch (error) {
