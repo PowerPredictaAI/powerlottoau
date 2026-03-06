@@ -26,7 +26,7 @@ const DAY_CONFIGS: Record<LotteryType, LotteryDayConfig> = {
     drawDay: 4,
     drawDayName: "Thursday",
     drawTime: "8:30 PM AEST",
-    accentClass: "text-red-500",
+    accentClass: "text-primary-blue",
     buttonGradient: "bg-gradient-to-r from-primary-blue to-primary-blue-light",
     badgeClass: "bg-primary-blue text-white",
   },
