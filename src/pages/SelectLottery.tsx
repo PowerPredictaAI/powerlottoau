@@ -52,7 +52,7 @@ const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     drawDayName: "Thursday",
     csvFile: "/database-powerball.csv",
     rulesText: ["7 Numbers (1–35)", "1 Powerball (1–20)"],
-    drawNight: "Every Thursday",
+    drawNight: "Thursdays",
     iconColor: "bg-gradient-to-br from-primary-blue to-primary-blue-light",
     gradientClass: "bg-gradient-to-r from-primary-blue to-primary-blue-light",
     hoverBorderClass: "hover:border-primary-blue/50",
