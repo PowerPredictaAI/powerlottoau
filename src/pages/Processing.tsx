@@ -18,7 +18,7 @@ const Processing = () => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [drawingsAnalyzed] = useState(() => Math.floor(Math.random() * (1200 - 800 + 1)) + 800);
+  const [drawingsAnalysed] = useState(() => Math.floor(Math.random() * (1200 - 800 + 1)) + 800);
 
   const lotteryType = (localStorage.getItem("selectedLottery") as LotteryType) || "powerball";
   const lotteryName = LOTTERY_NAMES[lotteryType];
