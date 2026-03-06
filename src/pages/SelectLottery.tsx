@@ -68,7 +68,7 @@ const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     drawDayName: "Saturday",
     csvFile: "/database-saturday-lotto.csv",
     rulesText: ["6 Numbers (1–45)"],
-    drawNight: "Saturday",
+    drawNight: "Saturdays",
     iconColor: "bg-gradient-to-br from-red-500 to-red-600",
     gradientClass: "bg-gradient-to-r from-red-500 to-red-600",
     hoverBorderClass: "hover:border-red-500/50",
