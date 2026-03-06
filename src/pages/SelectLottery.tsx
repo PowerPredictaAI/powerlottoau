@@ -84,7 +84,7 @@ const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
     drawDayName: "Tuesday",
     csvFile: "/database-ozlotto.csv",
     rulesText: ["7 Numbers (1–47)"],
-    drawNight: "Every Tuesday",
+    drawNight: "Tuesdays",
     iconColor: "bg-gradient-to-br from-green-500 to-yellow-500",
     gradientClass: "bg-gradient-to-r from-green-600 to-yellow-500",
     hoverBorderClass: "hover:border-green-500/50",
