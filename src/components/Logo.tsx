@@ -1,11 +1,14 @@
 import { cn } from "@/lib/utils";
 
+type LotteryType = "powerball" | "saturday-lotto" | "oz-lotto";
+
 interface LogoProps {
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
+  lotteryType?: LotteryType;
 }
 
-const Logo = ({ className, size = "md" }: LogoProps) => {
+const Logo = ({ className, size = "md", lotteryType }: LogoProps) => {
   const sizeClasses = {
     sm: {
       power: "text-xl",
