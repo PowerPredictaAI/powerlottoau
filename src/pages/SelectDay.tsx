@@ -124,7 +124,7 @@ const SelectDay = () => {
         <header className="bg-charcoal dark:bg-charcoal border-b border-border/50">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div>
-              <Logo size="sm" />
+              <Logo size="sm" lotteryType={lotteryType} />
               <p className={`text-xs font-semibold ${config.accentClass}`}>{config.name.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ")}</p>
             </div>
             <div className="flex items-center gap-4">
