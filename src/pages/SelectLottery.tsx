@@ -389,6 +389,11 @@ const SelectLottery = () => {
             </Button>
           </div>
 
+          {/* Ebook Section */}
+          <div className="mt-8 max-w-3xl mx-auto">
+            <EbookCard />
+          </div>
+
           {/* Database Selection Modal */}
           <Dialog open={isDatabaseModalOpen} onOpenChange={setIsDatabaseModalOpen}>
             <DialogContent className="sm:max-w-[500px]">
