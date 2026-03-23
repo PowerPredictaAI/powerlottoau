@@ -12,6 +12,7 @@ import ValidateGame from "./pages/ValidateGame";
 import ValidateResults from "./pages/ValidateResults";
 import Database from "./pages/Database";
 import NotFound from "./pages/NotFound";
+import OracleWidget from "./components/OracleAI/OracleWidget";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <OracleWidget />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
