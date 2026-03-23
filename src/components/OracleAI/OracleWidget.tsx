@@ -16,10 +16,15 @@ const QUICK_ACTIONS: QuickAction[] = [
 ];
 
 const OracleWidget = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showBubble, setShowBubble] = useState(true);
   const [inputValue, setInputValue] = useState("");
+
+  // Hide widget on login page
+  const isLoginPage = location.pathname === "/";
+  if (isLoginPage) return null;
 
   // Show bubble after 2 seconds
   useEffect(() => {
