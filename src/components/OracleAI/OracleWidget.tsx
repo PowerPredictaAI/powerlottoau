@@ -24,7 +24,6 @@ const OracleWidget = () => {
 
   // Hide widget on login page
   const isLoginPage = location.pathname === "/";
-  if (isLoginPage) return null;
 
   // Show bubble after 2 seconds
   useEffect(() => {
