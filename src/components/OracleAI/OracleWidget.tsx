@@ -47,6 +47,8 @@ const OracleWidget = () => {
     setIsUnlocked(unlocked);
   }, [isOpen]);
 
+  if (isLoginPage) return null;
+
   return (
     <>
       {/* Floating mascot + speech bubble */}
