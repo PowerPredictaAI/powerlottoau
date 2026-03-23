@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { X, Lock, Sparkles, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import oracleMascot from "@/assets/oracle-ai-mascot.png";
@@ -15,10 +16,14 @@ const QUICK_ACTIONS: QuickAction[] = [
 ];
 
 const OracleWidget = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showBubble, setShowBubble] = useState(true);
   const [inputValue, setInputValue] = useState("");
+
+  // Hide widget on login page
+  const isLoginPage = location.pathname === "/";
 
   // Show bubble after 2 seconds
   useEffect(() => {
@@ -41,6 +46,8 @@ const OracleWidget = () => {
     const unlocked = localStorage.getItem("oracleUnlocked") === "true";
     setIsUnlocked(unlocked);
   }, [isOpen]);
+
+  if (isLoginPage) return null;
 
   return (
     <>
