@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { X, Lock, Sparkles, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import oracleMascot from "@/assets/oracle-ai-mascot.png";
