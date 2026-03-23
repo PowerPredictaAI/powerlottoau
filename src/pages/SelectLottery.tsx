@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Star, LogOut, Database, Sparkles, Calendar, Save, X, FileSpreadsheet } from "lucide-react";
+import EbookCard from "@/components/EbookCard";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
@@ -386,6 +387,11 @@ const SelectLottery = () => {
               <Sparkles className="h-5 w-5" />
               Generate Your Numbers
             </Button>
+          </div>
+
+          {/* Ebook Section */}
+          <div className="mt-8 max-w-3xl mx-auto">
+            <EbookCard />
           </div>
 
           {/* Database Selection Modal */}
