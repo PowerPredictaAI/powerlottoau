@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Star, LogOut, Database, Sparkles, Calendar, Save, X, FileSpreadsheet } from "lucide-react";
+import EbookCard from "@/components/EbookCard";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
