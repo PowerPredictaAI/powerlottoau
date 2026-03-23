@@ -12,6 +12,7 @@ import ValidateGame from "./pages/ValidateGame";
 import ValidateResults from "./pages/ValidateResults";
 import Database from "./pages/Database";
 import NotFound from "./pages/NotFound";
+import OracleWidget from "./components/OracleAI/OracleWidget";
 
 const queryClient = new QueryClient();
 
