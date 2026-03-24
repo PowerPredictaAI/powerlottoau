@@ -4,7 +4,7 @@ import { X, Lock, Sparkles, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOracleAccess } from "@/hooks/useOracleAccess";
 import oracleMascot from "@/assets/oracle-ai-mascot.png";
-import ReactMarkdown from "react-markdown";
+
 
 interface QuickAction {
   label: string;
@@ -255,13 +255,7 @@ const OracleWidget = () => {
                         : "bg-muted/50 text-foreground"
                     }`}
                   >
-                    {msg.role === "assistant" ? (
-                      <div className="prose prose-sm max-w-none [&>p]:m-0 [&>ul]:m-0 [&>ol]:m-0">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
-                      </div>
-                    ) : (
-                      msg.content
-                    )}
+                    <span className="whitespace-pre-wrap">{msg.content}</span>
                   </div>
                 ))}
 
