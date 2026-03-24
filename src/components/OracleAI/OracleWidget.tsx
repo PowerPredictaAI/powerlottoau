@@ -155,6 +155,12 @@ const OracleWidget = () => {
       });
     };
 
+    const pageContext = {
+      route: location.pathname,
+      pageTitle: document.title,
+      selectedLottery: localStorage.getItem("selectedLottery") || undefined,
+    };
+
     await streamChat({
       messages: allMessages,
       onDelta: upsert,
@@ -163,6 +169,7 @@ const OracleWidget = () => {
         setMessages((prev) => [...prev, { role: "assistant", content: `⚠️ ${err}` }]);
         setIsStreaming(false);
       },
+      pageContext,
     });
   };
 
