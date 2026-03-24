@@ -27,11 +27,13 @@ async function streamChat({
   onDelta,
   onDone,
   onError,
+  pageContext,
 }: {
   messages: Msg[];
   onDelta: (t: string) => void;
   onDone: () => void;
   onError: (e: string) => void;
+  pageContext?: { route: string; pageTitle: string; selectedLottery?: string };
 }) {
   try {
     const resp = await fetch(CHAT_URL, {
@@ -40,7 +42,7 @@ async function streamChat({
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ messages }),
+      body: JSON.stringify({ messages, page_context: pageContext }),
     });
 
     if (!resp.ok) {
