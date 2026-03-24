@@ -65,6 +65,39 @@ export type Database = {
           },
         ]
       }
+      lottery_draws: {
+        Row: {
+          bonus_numbers: number[] | null
+          created_at: string | null
+          draw_date: string
+          draw_number: number
+          id: string
+          lottery_name: string
+          main_numbers: number[]
+          total_winners: string | null
+        }
+        Insert: {
+          bonus_numbers?: number[] | null
+          created_at?: string | null
+          draw_date: string
+          draw_number: number
+          id?: string
+          lottery_name: string
+          main_numbers: number[]
+          total_winners?: string | null
+        }
+        Update: {
+          bonus_numbers?: number[] | null
+          created_at?: string | null
+          draw_date?: string
+          draw_number?: number
+          id?: string
+          lottery_name?: string
+          main_numbers?: number[]
+          total_winners?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           created_at: string | null
