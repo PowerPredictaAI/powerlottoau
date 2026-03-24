@@ -24,7 +24,7 @@ export function useOracleAccess() {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const { data: profile, error: profileError } = await supabaseClient
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("id")
         .eq("email", email)
@@ -36,7 +36,7 @@ export function useOracleAccess() {
         return;
       }
 
-      const { data: product, error: productError } = await supabaseClient
+      const { data: product, error: productError } = await supabase
         .from("products")
         .select("id")
         .eq("slug", "oracle-ai")
@@ -50,7 +50,7 @@ export function useOracleAccess() {
       }
 
       const now = new Date().toISOString();
-      const { data: entitlement, error: entError } = await supabaseClient
+      const { data: entitlement, error: entError } = await supabase
         .from("entitlements")
         .select("id")
         .eq("user_id", profile.id)
