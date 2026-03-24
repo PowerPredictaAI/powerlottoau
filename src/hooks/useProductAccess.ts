@@ -55,7 +55,7 @@ export function useProductAccess(productSlug: string, options?: UseProductAccess
       }
 
       const now = new Date().toISOString();
-      const { data: entitlement, error: entitlementError } = await supabase
+      const { data: entitlement, error: entitlementError } = await externalSupabase
         .from("entitlements")
         .select("id")
         .eq("user_id", profile.id)
