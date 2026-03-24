@@ -32,13 +32,13 @@ export function useProductAccess(productSlug: string, options?: UseProductAccess
 
     try {
       const [{ data: profile, error: profileError }, { data: product, error: productError }] = await Promise.all([
-        supabase
+        externalSupabase
           .from("profiles")
           .select("id")
           .ilike("email", email)
           .limit(1)
           .maybeSingle(),
-        supabase
+        externalSupabase
           .from("products")
           .select("id")
           .eq("slug", productSlug)
