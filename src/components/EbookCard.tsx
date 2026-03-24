@@ -193,12 +193,25 @@ const EbookCard = () => {
               </Button>
             </div>
           </div>
-          <iframe
-            src={EBOOK_PDF_URL}
-            className="w-full flex-1"
+          <object
+            data={EBOOK_PDF_URL}
+            type="application/pdf"
+            className="w-full"
             style={{ height: "calc(90vh - 56px)" }}
-            title="The Smart Player's Handbook"
-          />
+          >
+            <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-center">
+              <p className="text-muted-foreground text-sm">
+                Your browser cannot display PDFs inline.
+              </p>
+              <Button
+                onClick={handleDownload}
+                className="gap-2 bg-gradient-to-r from-accent to-yellow-500 text-charcoal font-bold"
+              >
+                <Download className="h-5 w-5" />
+                Download PDF
+              </Button>
+            </div>
+          </object>
         </DialogContent>
       </Dialog>
     </>
