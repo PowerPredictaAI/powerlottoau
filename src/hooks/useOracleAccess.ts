@@ -1,9 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-const supabaseClient = createClient(supabaseUrl, supabaseKey);
+import { supabase } from "@/integrations/supabase/client";
 
 interface OracleAccessState {
   isUnlocked: boolean;
