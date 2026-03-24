@@ -1,5 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
 interface OracleAccessState {
   isUnlocked: boolean;
@@ -24,22 +28,19 @@ export function useOracleAccess() {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      // Find the user profile by email
-      const { data: profile, error: profileError } = await supabase
+      const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
         .select("id")
         .eq("email", email)
         .maybeSingle();
 
       if (profileError) throw profileError;
-
       if (!profile) {
         setState({ isUnlocked: false, isLoading: false, error: null });
         return;
       }
 
-      // Find the oracle-ai product
-      const { data: product, error: productError } = await supabase
+      const { data: product, error: productError } = await supabaseClient
         .from("products")
         .select("id")
         .eq("slug", "oracle-ai")
@@ -47,15 +48,13 @@ export function useOracleAccess() {
         .maybeSingle();
 
       if (productError) throw productError;
-
       if (!product) {
         setState({ isUnlocked: false, isLoading: false, error: null });
         return;
       }
 
-      // Check for active entitlement
       const now = new Date().toISOString();
-      const { data: entitlement, error: entError } = await supabase
+      const { data: entitlement, error: entError } = await supabaseClient
         .from("entitlements")
         .select("id")
         .eq("user_id", profile.id)
@@ -81,7 +80,6 @@ export function useOracleAccess() {
     }
   }, []);
 
-  // Auto-check on mount
   useEffect(() => {
     checkAccess();
   }, [checkAccess]);
