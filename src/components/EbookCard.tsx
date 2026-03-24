@@ -3,14 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Lock, BookOpen, Download, X } from "lucide-react";
+import { Lock, BookOpen, Download, X, Loader2 } from "lucide-react";
 import ebookCover from "@/assets/ebook-cover.jpg";
+import { useEbookAccess } from "@/hooks/useEbookAccess";
 
 const EBOOK_PRICE = 7.90;
 const EBOOK_PDF_URL = "/ebooks/definitive-guide-lottery-ai.pdf";
 
 const EbookCard = () => {
-  const [isUnlocked] = useState(() => localStorage.getItem("ebookUnlocked") === "true");
+  const { isUnlocked, isLoading } = useEbookAccess();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReaderOpen, setIsReaderOpen] = useState(false);
 
