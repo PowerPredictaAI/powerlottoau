@@ -4,7 +4,7 @@ import { X, Lock, Sparkles, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOracleAccess } from "@/hooks/useOracleAccess";
 import oracleMascot from "@/assets/oracle-ai-mascot.png";
-import ReactMarkdown from "react-markdown";
+
 
 interface QuickAction {
   label: string;
