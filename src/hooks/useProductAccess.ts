@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { externalSupabase } from "@/lib/externalSupabase";
 import { normalizeEmail, PRODUCT_ACCESS_REFRESH_EVENT } from "@/lib/accessControl";
 
 interface ProductAccessState {
@@ -32,13 +32,13 @@ export function useProductAccess(productSlug: string, options?: UseProductAccess
 
     try {
       const [{ data: profile, error: profileError }, { data: product, error: productError }] = await Promise.all([
-        supabase
+        externalSupabase
           .from("profiles")
           .select("id")
           .ilike("email", email)
           .limit(1)
           .maybeSingle(),
-        supabase
+        externalSupabase
           .from("products")
           .select("id")
           .eq("slug", productSlug)
@@ -55,7 +55,7 @@ export function useProductAccess(productSlug: string, options?: UseProductAccess
       }
 
       const now = new Date().toISOString();
-      const { data: entitlement, error: entitlementError } = await supabase
+      const { data: entitlement, error: entitlementError } = await externalSupabase
         .from("entitlements")
         .select("id")
         .eq("user_id", profile.id)
