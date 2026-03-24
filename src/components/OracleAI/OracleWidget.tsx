@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { X, Lock, Sparkles, Send } from "lucide-react";
+import { X, Lock, Sparkles, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useOracleAccess } from "@/hooks/useOracleAccess";
 import oracleMascot from "@/assets/oracle-ai-mascot.png";
 
 interface QuickAction {
@@ -18,14 +19,12 @@ const QUICK_ACTIONS: QuickAction[] = [
 const OracleWidget = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(false);
   const [showBubble, setShowBubble] = useState(true);
   const [inputValue, setInputValue] = useState("");
+  const { isUnlocked, isLoading, error, recheckAccess } = useOracleAccess();
 
-  // Hide widget on login page
   const isLoginPage = location.pathname === "/";
 
-  // Show bubble after 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => setShowBubble(true), 2000);
     return () => clearTimeout(timer);
@@ -41,11 +40,9 @@ const OracleWidget = () => {
     setTimeout(() => setShowBubble(true), 5000);
   };
 
-  // Check unlock status from localStorage
-  useEffect(() => {
-    const unlocked = localStorage.getItem("oracleUnlocked") === "true";
-    setIsUnlocked(unlocked);
-  }, [isOpen]);
+  const handleVerifyAccess = async () => {
+    await recheckAccess();
+  };
 
   if (isLoginPage) return null;
 
@@ -54,21 +51,17 @@ const OracleWidget = () => {
       {/* Floating mascot + speech bubble */}
       {!isOpen && (
         <div className="fixed bottom-4 right-4 z-50 flex items-end gap-2">
-          {/* Speech bubble */}
           {showBubble && (
             <div className="animate-fade-in mb-12 max-w-[200px] rounded-xl bg-white p-3 text-sm font-medium text-foreground shadow-lg border border-border relative">
               <p>With me, less doubt and more method. Shall we talk?</p>
-              {/* Bubble arrow */}
               <div className="absolute -right-2 bottom-4 w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[10px] border-l-white" />
             </div>
           )}
 
-          {/* Mascot with pulsing aura */}
           <button
             onClick={handleMascotClick}
             className="relative w-24 h-24 flex-shrink-0 focus:outline-none group cursor-pointer"
           >
-            {/* Pulsing aura rings */}
             <span className="absolute inset-0 rounded-full bg-primary/20 animate-oracle-pulse" />
             <span className="absolute inset-1 rounded-full bg-primary/15 animate-oracle-pulse-delayed" />
             <img
@@ -106,11 +99,13 @@ const OracleWidget = () => {
           </div>
 
           {/* Content area */}
-          {isUnlocked ? (
-            /* UNLOCKED: Chat interface */
+          {isLoading ? (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : isUnlocked ? (
             <>
               <div className="flex-1 overflow-y-auto p-4 min-h-[280px]">
-                {/* Welcome message */}
                 <div className="bg-muted/50 rounded-xl p-3 mb-4 text-sm text-foreground max-w-[85%]">
                   <p>
                     G'day! I'm <strong>Oracle AI</strong>, your copilot inside the platform. 🔮
@@ -122,7 +117,6 @@ const OracleWidget = () => {
                 </div>
               </div>
 
-              {/* Quick actions */}
               <div className="px-4 pb-2 flex flex-wrap gap-2">
                 {QUICK_ACTIONS.map((action) => (
                   <button
@@ -134,7 +128,6 @@ const OracleWidget = () => {
                 ))}
               </div>
 
-              {/* Input */}
               <div className="px-4 pb-4 pt-2">
                 <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2">
                   <input
@@ -151,7 +144,6 @@ const OracleWidget = () => {
               </div>
             </>
           ) : (
-            /* LOCKED: Unlock screen */
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
                 <Lock className="h-8 w-8 text-primary" />
@@ -162,18 +154,27 @@ const OracleWidget = () => {
                 Your personal copilot inside the platform. Step-by-step guidance, instant answers, and contextual help.
               </p>
 
+              {error && (
+                <p className="text-xs text-destructive mb-4 leading-relaxed">
+                  {error}
+                </p>
+              )}
+
               <Button className="w-full gap-2 mb-3" size="lg">
                 <Sparkles className="h-4 w-4" />
                 Activate Now
               </Button>
 
-              <button className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
+              <button
+                onClick={handleVerifyAccess}
+                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+              >
                 <Sparkles className="h-3 w-3" />
-                Review access
+                Verify access
               </button>
 
               <p className="text-[10px] text-muted-foreground/60 mt-4">
-                If you just purchased, wait 1 minute and press "Review access".
+                If you just purchased, wait 1 minute and press "Verify access".
               </p>
             </div>
           )}
