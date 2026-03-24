@@ -7,6 +7,7 @@ import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
 import bgImage from "@/assets/money-bg.jpg";
 import { z } from "zod";
+import { normalizeEmail, PRODUCT_ACCESS_REFRESH_EVENT } from "@/lib/accessControl";
 
 const emailSchema = z.string().email("Please enter the email used at time of purchase");
 
@@ -38,8 +39,11 @@ const Login = () => {
   };
 
   const handleAccess = () => {
-    if (email && validateEmail(email)) {
-      localStorage.setItem("userEmail", email);
+    const normalizedEmail = normalizeEmail(email);
+
+    if (normalizedEmail && validateEmail(normalizedEmail)) {
+      localStorage.setItem("userEmail", normalizedEmail);
+      window.dispatchEvent(new Event(PRODUCT_ACCESS_REFRESH_EVENT));
       navigate("/select-lottery");
     }
   };
