@@ -160,7 +160,11 @@ const OracleWidget = () => {
                 </p>
               )}
 
-              <Button className="w-full gap-2 mb-3" size="lg">
+              <Button
+                className="w-full gap-2 mb-3"
+                size="lg"
+                onClick={() => window.open("https://buy.stripe.com/bJe4gB3xgcfY2xPb5I1Fe02", "_blank")}
+              >
                 <Sparkles className="h-4 w-4" />
                 Activate Now
               </Button>

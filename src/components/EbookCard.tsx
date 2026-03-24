@@ -151,10 +151,7 @@ const EbookCard = () => {
                 </>
               ) : (
                 <Button
-                  onClick={() => {
-                    // Payment integration will go here
-                    alert("Payment integration coming soon. Price: A$7.90");
-                  }}
+                  onClick={() => window.open("https://buy.stripe.com/3cIfZj7Nwgweegx5Lo1Fe03", "_blank")}
                   className="gap-2 bg-gradient-to-r from-accent to-yellow-500 text-charcoal font-bold hover:opacity-90 px-8"
                   size="lg"
                 >
