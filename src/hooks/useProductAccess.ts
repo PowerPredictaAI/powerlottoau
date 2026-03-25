@@ -32,13 +32,13 @@ export function useProductAccess(productSlug: string, options?: UseProductAccess
 
     try {
       const [{ data: profile, error: profileError }, { data: product, error: productError }] = await Promise.all([
-        externalSupabase
+        supabase
           .from("profiles")
           .select("id")
           .ilike("email", email)
           .limit(1)
           .maybeSingle(),
-        externalSupabase
+        supabase
           .from("products")
           .select("id")
           .eq("slug", productSlug)
@@ -55,7 +55,7 @@ export function useProductAccess(productSlug: string, options?: UseProductAccess
       }
 
       const now = new Date().toISOString();
-      const { data: entitlement, error: entitlementError } = await externalSupabase
+      const { data: entitlement, error: entitlementError } = await supabase
         .from("entitlements")
         .select("id")
         .eq("user_id", profile.id)
