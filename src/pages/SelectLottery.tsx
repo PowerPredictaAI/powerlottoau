@@ -303,7 +303,7 @@ const SelectLottery = () => {
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Database</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/patterns")} className="gap-2">
+              <Button variant="outline" size="sm" onClick={() => setIsPatternsModalOpen(true)} className="gap-2">
                 <TrendingUp className="h-4 w-4" />
                 <span className="hidden sm:inline">Patterns</span>
               </Button>
