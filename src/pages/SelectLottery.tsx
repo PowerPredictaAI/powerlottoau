@@ -291,10 +291,14 @@ const SelectLottery = () => {
         <header className="bg-charcoal dark:bg-charcoal border-b border-border/50">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <Logo size="sm" />
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Button variant="outline" size="sm" onClick={() => setIsDatabaseModalOpen(true)} className="gap-2">
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Database</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => navigate("/patterns")} className="gap-2">
+                <TrendingUp className="h-4 w-4" />
+                <span className="hidden sm:inline">Patterns</span>
               </Button>
               <Button
                 variant="outline"
