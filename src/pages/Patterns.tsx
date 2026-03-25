@@ -229,7 +229,7 @@ const Patterns = () => {
 
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-[140px]">
-                    <label className="text-xs text-white/60 mb-1 block">Start Year</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">Start Year</label>
                     <Select value={startYear} onValueChange={setStartYear}>
                       <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
                       <SelectContent>
