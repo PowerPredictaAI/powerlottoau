@@ -294,10 +294,10 @@ const Patterns = () => {
               <Card className="glass-panel dark:glass-panel glass-panel-light p-5 sm:p-6 mb-6">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="h-5 w-5" style={{ color: config.accentColor }} />
-                  <h2 className="font-display font-bold text-lg text-white">Number Co-occurrence Heat Map</h2>
-                </div>
-                <p className="text-sm text-white/50 mb-4">
-                  The top {Math.min(50, topPairs.length)} pairs of numbers that appear together most frequently in winning combinations
+                   <h2 className="font-display font-bold text-lg text-foreground">Number Co-occurrence Heat Map</h2>
+                 </div>
+                 <p className="text-sm text-muted-foreground mb-4">
+                   The top {Math.min(50, topPairs.length)} pairs of numbers that appear together most frequently in winning combinations
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
