@@ -239,7 +239,7 @@ const Patterns = () => {
                     </Select>
                   </div>
 
-                  <span className="text-white/40 font-medium pt-5">to</span>
+                  <span className="text-muted-foreground font-medium pt-5">to</span>
 
                   <div className="flex-1 min-w-[140px]">
                     <label className="text-xs text-white/60 mb-1 block">End Year</label>
