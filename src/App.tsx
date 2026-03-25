@@ -11,6 +11,7 @@ import Results from "./pages/Results";
 import ValidateGame from "./pages/ValidateGame";
 import ValidateResults from "./pages/ValidateResults";
 import Database from "./pages/Database";
+import Patterns from "./pages/Patterns";
 import NotFound from "./pages/NotFound";
 import OracleWidget from "./components/OracleAI/OracleWidget";
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/validate-game" element={<ValidateGame />} />
           <Route path="/validate-results" element={<ValidateResults />} />
           <Route path="/database" element={<Database />} />
+          <Route path="/patterns" element={<Patterns />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
