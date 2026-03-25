@@ -221,15 +221,15 @@ const Patterns = () => {
             <>
               {/* Period Filter */}
               <Card className="glass-panel dark:glass-panel glass-panel-light p-5 sm:p-6 mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Filter className="h-5 w-5" style={{ color: config.accentColor }} />
-                  <h2 className="font-display font-bold text-lg text-white">Filter by Time Period</h2>
-                </div>
-                <p className="text-sm text-white/50 mb-4">Analyse patterns from specific years or view all data</p>
+                 <div className="flex items-center gap-2 mb-3">
+                   <Filter className="h-5 w-5" style={{ color: config.accentColor }} />
+                   <h2 className="font-display font-bold text-lg text-foreground">Filter by Time Period</h2>
+                 </div>
+                 <p className="text-sm text-muted-foreground mb-4">Analyse patterns from specific years or view all data</p>
 
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-[140px]">
-                    <label className="text-xs text-white/60 mb-1 block">Start Year</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">Start Year</label>
                     <Select value={startYear} onValueChange={setStartYear}>
                       <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -239,10 +239,10 @@ const Patterns = () => {
                     </Select>
                   </div>
 
-                  <span className="text-white/40 font-medium pt-5">to</span>
+                  <span className="text-muted-foreground font-medium pt-5">to</span>
 
                   <div className="flex-1 min-w-[140px]">
-                    <label className="text-xs text-white/60 mb-1 block">End Year</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">End Year</label>
                     <Select value={endYear} onValueChange={setEndYear}>
                       <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -257,7 +257,7 @@ const Patterns = () => {
                   </Button>
                 </div>
 
-                <p className="text-xs text-white/50 mt-3">
+                <p className="text-xs text-muted-foreground mt-3">
                   Viewing: <span style={{ color: config.accentColor }} className="font-semibold">
                     {startYear === "all" && endYear === "all" ? "All Time" : `${displayStartYear} – ${displayEndYear}`}
                   </span>{" "}
@@ -269,18 +269,18 @@ const Patterns = () => {
               <Card className="glass-panel dark:glass-panel glass-panel-light p-5 sm:p-6 mb-6">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="h-5 w-5" style={{ color: config.accentColor }} />
-                  <h2 className="font-display font-bold text-lg text-white">Top 20 Most Frequent Numbers</h2>
-                </div>
-                <p className="text-sm text-white/50 mb-4">Numbers that appear most frequently across all draws</p>
+                   <h2 className="font-display font-bold text-lg text-foreground">Top 20 Most Frequent Numbers</h2>
+                 </div>
+                 <p className="text-sm text-muted-foreground mb-4">Numbers that appear most frequently across all draws</p>
 
                 <div className="h-[300px] sm:h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={top20} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                      <XAxis dataKey="number" tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 12 }} />
-                      <YAxis tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{ background: "hsl(220,20%,12%)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#fff" }}
+                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                       <XAxis dataKey="number" tick={{ fill: "#374151", fontSize: 12 }} />
+                       <YAxis tick={{ fill: "#374151", fontSize: 12 }} />
+                       <Tooltip
+                         contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, color: "#111" }}
                         formatter={(value: number) => [`${value} times`, "Frequency"]}
                         labelFormatter={(label) => `Number ${label}`}
                       />
@@ -294,10 +294,10 @@ const Patterns = () => {
               <Card className="glass-panel dark:glass-panel glass-panel-light p-5 sm:p-6 mb-6">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="h-5 w-5" style={{ color: config.accentColor }} />
-                  <h2 className="font-display font-bold text-lg text-white">Number Co-occurrence Heat Map</h2>
-                </div>
-                <p className="text-sm text-white/50 mb-4">
-                  The top {Math.min(50, topPairs.length)} pairs of numbers that appear together most frequently in winning combinations
+                   <h2 className="font-display font-bold text-lg text-foreground">Number Co-occurrence Heat Map</h2>
+                 </div>
+                 <p className="text-sm text-muted-foreground mb-4">
+                   The top {Math.min(50, topPairs.length)} pairs of numbers that appear together most frequently in winning combinations
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -344,18 +344,18 @@ const Patterns = () => {
               <Card className="glass-panel dark:glass-panel glass-panel-light p-5 sm:p-6 mb-6">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="h-5 w-5" style={{ color: config.accentColor }} />
-                  <h2 className="font-display font-bold text-lg text-white">Total Winners by Year</h2>
-                </div>
-                <p className="text-sm text-white/50 mb-4">Total number of winners each year</p>
+                   <h2 className="font-display font-bold text-lg text-foreground">Total Winners by Year</h2>
+                 </div>
+                 <p className="text-sm text-muted-foreground mb-4">Total number of winners each year</p>
 
                 <div className="h-[300px] sm:h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={winnersByYear} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                      <XAxis dataKey="year" tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 11 }} />
-                      <YAxis tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{ background: "hsl(220,20%,12%)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#fff" }}
+                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                       <XAxis dataKey="year" tick={{ fill: "#374151", fontSize: 11 }} />
+                       <YAxis tick={{ fill: "#374151", fontSize: 12 }} />
+                       <Tooltip
+                         contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, color: "#111" }}
                         formatter={(value: number) => [value.toLocaleString(), "Winners"]}
                       />
                       <Bar dataKey="winners" fill={config.barColor} radius={[4, 4, 0, 0]} opacity={0.85} />
