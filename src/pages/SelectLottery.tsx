@@ -99,6 +99,7 @@ const SelectLottery = () => {
   const [isLegalDialogOpen, setIsLegalDialogOpen] = useState(false);
   const [isSmartTipsOpen, setIsSmartTipsOpen] = useState(false);
   const [isDatabaseModalOpen, setIsDatabaseModalOpen] = useState(false);
+  const [isPatternsModalOpen, setIsPatternsModalOpen] = useState(false);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
 
   // Generate by filter state
