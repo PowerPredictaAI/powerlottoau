@@ -187,6 +187,31 @@ function parseNums(text: string | null): number[] {
   return text.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
 }
 
+// Month name mapping
+const MONTH_MAP: Record<string, number> = {
+  january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+  july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
+};
+
+// Parse text date from DB into { month, year } for filtering
+// Formats: "21/03/2026" (powerball, saturdaylotto) or "17 March" + Year col "2026" (ozlotto)
+function parseDateText(dateStr: string, yearStr?: string | null): { month: number; year: number } | null {
+  if (!dateStr) return null;
+  // Try dd/mm/yyyy
+  const slashMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashMatch) return { month: parseInt(slashMatch[2]), year: parseInt(slashMatch[3]) };
+  // Try yyyy-mm-dd
+  const isoMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) return { month: parseInt(isoMatch[2]), year: parseInt(isoMatch[1]) };
+  // Try "17 March" + year column
+  const textMatch = dateStr.match(/^\d+\s+(\w+)/);
+  if (textMatch && yearStr) {
+    const m = MONTH_MAP[textMatch[1].toLowerCase()];
+    if (m) return { month: m, year: parseInt(yearStr) };
+  }
+  return null;
+}
+
 // ── Tool definition ──
 const TOOLS = [
   {
@@ -194,7 +219,7 @@ const TOOLS = [
     function: {
       name: "query_lottery_db",
       description:
-        "Query lottery draw history from the database. Each lottery has its own table. Returns parsed draw results with main numbers and bonus/powerball numbers.",
+        "Query lottery draw history from the database. Each lottery has its own table. Returns parsed draw results with main numbers and bonus/powerball numbers. Use month+year params to filter by specific period.",
       parameters: {
         type: "object",
         properties: {
@@ -216,12 +241,20 @@ const TOOLS = [
           },
           limit: {
             type: "number",
-            description: "Number of draws to fetch (default 52, max 500)",
+            description: "Number of draws to fetch (default 52, max 1000)",
           },
           numbers: {
             type: "array",
             items: { type: "number" },
             description: "Numbers to check (for check_combination)",
+          },
+          month: {
+            type: "number",
+            description: "Month number (1-12) to filter draws. Use with year.",
+          },
+          year: {
+            type: "number",
+            description: "Year (e.g. 2024, 2025, 2026) to filter draws. Use with month.",
           },
         },
         required: ["lottery_name", "query_type"],
@@ -229,6 +262,38 @@ const TOOLS = [
     },
   },
 ];
+
+// Helper: fetch all rows from a table (bypasses 1000 limit)
+async function fetchAllRows(supabase: any, table: string): Promise<any[]> {
+  const rows: any[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from(table)
+      .select("*")
+      .order("id", { ascending: true })
+      .range(from, from + pageSize - 1);
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0) break;
+    rows.push(...data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+  return rows;
+}
+
+// Filter rows by month/year using text date parsing
+function filterByPeriod(rows: any[], cfg: any, month?: number, year?: number): any[] {
+  if (!month && !year) return rows;
+  return rows.filter((row: any) => {
+    const parsed = parseDateText(row[cfg.dateCol], cfg.yearCol ? row[cfg.yearCol] : null);
+    if (!parsed) return false;
+    if (month && parsed.month !== month) return false;
+    if (year && parsed.year !== year) return false;
+    return true;
+  });
+}
 
 // ── Execute DB query ──
 async function executeDbQuery(supabase: any, args: any): Promise<string> {
