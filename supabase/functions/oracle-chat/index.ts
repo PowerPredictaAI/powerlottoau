@@ -386,9 +386,10 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const supabase = createClient(supabaseUrl!, supabaseKey!);
+    // Use external Supabase for DB queries (powerball_database table)
+    const extUrl = "https://vygtkmmkfrfrclfnljop.supabase.co";
+    const extKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5Z3RrbW1rZnJmcmNsZm5sam9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNzA1OTUsImV4cCI6MjA4OTg0NjU5NX0.hPI6Yppz-CybKsXTEfUElxxmojyPKJ4ujy6msK9zLBE";
+    const supabase = createClient(extUrl, extKey);
 
     // Build system message with page context
     let systemContent = SYSTEM_PROMPT;
