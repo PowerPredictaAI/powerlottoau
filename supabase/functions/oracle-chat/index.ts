@@ -20,9 +20,9 @@ Help the user:
 DATABASE INTEGRATION (MANDATORY)
 ========================
 You have access to THREE separate lottery database tables via the "query_lottery_db" tool:
-- powerball_database (columns: id, draw_date as DATE, main_numbers as TEXT, powerball as TEXT)
-- saturdaylotto_database (columns: id, draw_date as TEXT like "21/03/2026", main_numbers as TEXT, supps as TEXT)
-- ozlotto_database (columns: id, draw_date as TEXT like "17 March", year as TEXT, main_numbers as TEXT, supps as TEXT)
+- powerball_database (columns: id, "Draw Date", "Main Numbers", "Powerball")
+- saturdaylotto_database (columns: id, "Draw Date", "Main Numbers", "Supps")
+- ozlotto_database (columns: id, "Draw Date", "Year", "Main Numbers", "Supps")
 
 Use it AUTOMATICALLY whenever:
 - User asks about specific draw dates or results
@@ -169,14 +169,15 @@ SUPPORT & REFUNDS
 - Ask for: email, last 4 card digits, purchase date`;
 
 // ── Table config per lottery ──
-function getLotteryTable(lottery_name: string) {
+// Column names in the external Supabase have spaces and capitals
+function getLotteryConfig(lottery_name: string) {
   switch (lottery_name) {
     case "Saturday Lotto":
-      return { table: "saturdaylotto_database", bonusCol: "supps" };
+      return { table: "saturdaylotto_database", mainCol: "Main Numbers", bonusCol: "Supps", dateCol: "Draw Date", yearCol: null };
     case "Oz Lotto":
-      return { table: "ozlotto_database", bonusCol: "supps" };
-    default:
-      return { table: "powerball_database", bonusCol: "powerball" };
+      return { table: "ozlotto_database", mainCol: "Main Numbers", bonusCol: "Supps", dateCol: "Draw Date", yearCol: "Year" };
+    default: // Powerball
+      return { table: "powerball_database", mainCol: "Main Numbers", bonusCol: "Powerball", dateCol: "Draw Date", yearCol: null };
   }
 }
 
@@ -193,14 +194,14 @@ const TOOLS = [
     function: {
       name: "query_lottery_db",
       description:
-        "Query lottery draw history. Each lottery has its own table (powerball_database, saturdaylotto_database, ozlotto_database). Data columns are TEXT — numbers are space-separated. Returns parsed results.",
+        "Query lottery draw history from the database. Each lottery has its own table. Returns parsed draw results with main numbers and bonus/powerball numbers.",
       parameters: {
         type: "object",
         properties: {
           lottery_name: {
             type: "string",
             enum: ["Powerball", "Saturday Lotto", "Oz Lotto"],
-            description: "Which lottery to query — maps to the correct table automatically",
+            description: "Which lottery to query",
           },
           query_type: {
             type: "string",
@@ -232,30 +233,30 @@ const TOOLS = [
 // ── Execute DB query ──
 async function executeDbQuery(supabase: any, args: any): Promise<string> {
   const { lottery_name, query_type, limit = 52, numbers } = args;
-  const { table, bonusCol } = getLotteryTable(lottery_name);
+  const cfg = getLotteryConfig(lottery_name);
 
   try {
     switch (query_type) {
       case "recent_draws": {
         const { data, error } = await supabase
-          .from(table)
+          .from(cfg.table)
           .select("*")
           .order("id", { ascending: true })
           .limit(Math.min(limit, 100));
         if (error) return `Error: ${error.message}`;
         const parsed = (data || []).map((row: any) => ({
           id: row.id,
-          draw_date: row.draw_date + (row.year ? ` ${row.year}` : ""),
-          main_numbers: parseNums(row.main_numbers),
-          bonus: parseNums(row[bonusCol]),
+          draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
+          main_numbers: parseNums(row[cfg.mainCol]),
+          bonus: parseNums(row[cfg.bonusCol]),
         }));
-        return JSON.stringify({ lottery: lottery_name, draws: parsed });
+        return JSON.stringify({ lottery: lottery_name, count: parsed.length, draws: parsed });
       }
 
       case "frequency_analysis": {
         const { data, error } = await supabase
-          .from(table)
-          .select(`main_numbers, ${bonusCol}`)
+          .from(cfg.table)
+          .select("*")
           .order("id", { ascending: true })
           .limit(Math.min(limit, 500));
         if (error) return `Error: ${error.message}`;
@@ -263,8 +264,8 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
         const freq: Record<number, number> = {};
         const bonusFreq: Record<number, number> = {};
         for (const row of data || []) {
-          for (const n of parseNums(row.main_numbers)) freq[n] = (freq[n] || 0) + 1;
-          for (const n of parseNums(row[bonusCol])) bonusFreq[n] = (bonusFreq[n] || 0) + 1;
+          for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
+          for (const n of parseNums(row[cfg.bonusCol])) bonusFreq[n] = (bonusFreq[n] || 0) + 1;
         }
         const sorted = Object.entries(freq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count);
         const bonusSorted = Object.entries(bonusFreq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count);
@@ -280,19 +281,19 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
 
       case "top_numbers": {
         const { data, error } = await supabase
-          .from(table)
-          .select(`main_numbers, ${bonusCol}`)
+          .from(cfg.table)
+          .select("*")
           .order("id", { ascending: true })
           .limit(Math.min(limit, 500));
         if (error) return `Error: ${error.message}`;
 
         const freq: Record<number, number> = {};
         for (const row of data || [])
-          for (const n of parseNums(row.main_numbers)) freq[n] = (freq[n] || 0) + 1;
+          for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
 
         const pairs: Record<string, number> = {};
         for (const row of data || []) {
-          const nums = parseNums(row.main_numbers).sort((a, b) => a - b);
+          const nums = parseNums(row[cfg.mainCol]).sort((a, b) => a - b);
           for (let i = 0; i < nums.length; i++)
             for (let j = i + 1; j < nums.length; j++) {
               const key = `${nums[i]}-${nums[j]}`;
@@ -311,8 +312,8 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
       case "check_combination": {
         if (!numbers || numbers.length === 0) return "No numbers provided.";
         const { data, error } = await supabase
-          .from(table)
-          .select(`id, draw_date, main_numbers, ${bonusCol}`)
+          .from(cfg.table)
+          .select("*")
           .order("id", { ascending: true })
           .limit(Math.min(limit, 500));
         if (error) return `Error: ${error.message}`;
@@ -321,7 +322,7 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
         for (const n of numbers) freq[n] = 0;
         let exactMatch = false;
         for (const row of data || []) {
-          const mainNums = parseNums(row.main_numbers);
+          const mainNums = parseNums(row[cfg.mainCol]);
           for (const n of numbers) if (mainNums.includes(n)) freq[n]++;
           if (JSON.stringify([...mainNums].sort((a, b) => a - b)) === JSON.stringify([...numbers].sort((a, b) => a - b))) exactMatch = true;
         }
@@ -331,16 +332,16 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
 
       case "draws_by_date_range": {
         const { data, error } = await supabase
-          .from(table)
+          .from(cfg.table)
           .select("*")
           .order("id", { ascending: true })
           .limit(100);
         if (error) return `Error: ${error.message}`;
         const parsed = (data || []).map((row: any) => ({
           id: row.id,
-          draw_date: row.draw_date + (row.year ? ` ${row.year}` : ""),
-          main_numbers: parseNums(row.main_numbers),
-          bonus: parseNums(row[bonusCol]),
+          draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
+          main_numbers: parseNums(row[cfg.mainCol]),
+          bonus: parseNums(row[cfg.bonusCol]),
         }));
         return JSON.stringify({ lottery: lottery_name, draws: parsed });
       }
@@ -399,12 +400,8 @@ serve(async (req) => {
 
     if (!firstResponse.ok) {
       const status = firstResponse.status;
-      if (status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      }
-      if (status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      }
+      if (status === 429) return new Response(JSON.stringify({ error: "Rate limit exceeded." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (status === 402) return new Response(JSON.stringify({ error: "AI credits exhausted." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       const t = await firstResponse.text();
       console.error("AI gateway error:", status, t);
       return new Response(JSON.stringify({ error: "AI gateway error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -425,7 +422,7 @@ serve(async (req) => {
       const args = JSON.parse(tc.function.arguments);
       console.log("Tool call:", tc.function.name, JSON.stringify(args));
       const result = await executeDbQuery(supabase, args);
-      console.log("Tool result length:", result.length);
+      console.log("Tool result preview:", result.substring(0, 300));
       toolResults.push({ role: "tool", tool_call_id: tc.id, content: result });
     }
 
