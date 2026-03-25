@@ -269,9 +269,9 @@ const Patterns = () => {
               <Card className="glass-panel dark:glass-panel glass-panel-light p-5 sm:p-6 mb-6">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="h-5 w-5" style={{ color: config.accentColor }} />
-                  <h2 className="font-display font-bold text-lg text-white">Top 20 Most Frequent Numbers</h2>
-                </div>
-                <p className="text-sm text-white/50 mb-4">Numbers that appear most frequently across all draws</p>
+                   <h2 className="font-display font-bold text-lg text-foreground">Top 20 Most Frequent Numbers</h2>
+                 </div>
+                 <p className="text-sm text-muted-foreground mb-4">Numbers that appear most frequently across all draws</p>
 
                 <div className="h-[300px] sm:h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
