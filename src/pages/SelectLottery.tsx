@@ -99,6 +99,7 @@ const SelectLottery = () => {
   const [isLegalDialogOpen, setIsLegalDialogOpen] = useState(false);
   const [isSmartTipsOpen, setIsSmartTipsOpen] = useState(false);
   const [isDatabaseModalOpen, setIsDatabaseModalOpen] = useState(false);
+  const [isPatternsModalOpen, setIsPatternsModalOpen] = useState(false);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
 
   // Generate by filter state
@@ -133,6 +134,12 @@ const SelectLottery = () => {
     localStorage.setItem("selectedLottery", lottery);
     navigate("/database");
     setIsDatabaseModalOpen(false);
+  };
+
+  const handleOpenPatterns = (lottery: LotteryType) => {
+    localStorage.setItem("selectedLottery", lottery);
+    navigate("/patterns");
+    setIsPatternsModalOpen(false);
   };
 
   const handleSelectFilterLottery = (lottery: LotteryType) => {
@@ -296,7 +303,7 @@ const SelectLottery = () => {
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Database</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/patterns")} className="gap-2">
+              <Button variant="outline" size="sm" onClick={() => setIsPatternsModalOpen(true)} className="gap-2">
                 <TrendingUp className="h-4 w-4" />
                 <span className="hidden sm:inline">Patterns</span>
               </Button>
@@ -432,7 +439,40 @@ const SelectLottery = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Generate Numbers Selection Modal */}
+          {/* Patterns Selection Modal */}
+          <Dialog open={isPatternsModalOpen} onOpenChange={setIsPatternsModalOpen}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary-blue" />
+                  Select Lottery Patterns
+                </DialogTitle>
+                <DialogDescription>Choose which lottery patterns you want to analyse</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3 py-4">
+                {(Object.keys(LOTTERY_CONFIGS) as LotteryType[]).map((key) => {
+                  const config = LOTTERY_CONFIGS[key];
+                  return (
+                    <Button
+                      key={key}
+                      variant="outline"
+                      className={`w-full h-16 justify-start gap-4 text-left ${config.hoverBorderClass} transition-all hover:scale-[1.02]`}
+                      onClick={() => handleOpenPatterns(key)}
+                    >
+                      <div className={`w-10 h-10 rounded-full ${config.iconColor} flex items-center justify-center flex-shrink-0`}>
+                        <Star className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold">{config.name}</p>
+                        <p className="text-xs text-muted-foreground">{config.rulesText.join(" • ")} • {config.drawNight}</p>
+                      </div>
+                    </Button>
+                  );
+                })}
+              </div>
+            </DialogContent>
+          </Dialog>
+
           <Dialog
             open={isGenerateModalOpen}
             onOpenChange={(open) => {
