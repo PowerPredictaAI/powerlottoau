@@ -136,6 +136,12 @@ const SelectLottery = () => {
     setIsDatabaseModalOpen(false);
   };
 
+  const handleOpenPatterns = (lottery: LotteryType) => {
+    localStorage.setItem("selectedLottery", lottery);
+    navigate("/patterns");
+    setIsPatternsModalOpen(false);
+  };
+
   const handleSelectFilterLottery = (lottery: LotteryType) => {
     setSelectedFilterLottery(lottery);
     setStartDate(undefined);
