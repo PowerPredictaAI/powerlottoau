@@ -257,7 +257,7 @@ const Patterns = () => {
                   </Button>
                 </div>
 
-                <p className="text-xs text-white/50 mt-3">
+                <p className="text-xs text-muted-foreground mt-3">
                   Viewing: <span style={{ color: config.accentColor }} className="font-semibold">
                     {startYear === "all" && endYear === "all" ? "All Time" : `${displayStartYear} – ${displayEndYear}`}
                   </span>{" "}
