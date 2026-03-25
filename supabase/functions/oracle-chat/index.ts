@@ -295,69 +295,50 @@ function filterByPeriod(rows: any[], cfg: any, month?: number, year?: number): a
   });
 }
 
-// ── Execute DB query ──
 async function executeDbQuery(supabase: any, args: any): Promise<string> {
-  const { lottery_name, query_type, limit = 52, numbers } = args;
+  const { lottery_name, query_type, limit = 52, numbers, month, year } = args;
   const cfg = getLotteryConfig(lottery_name);
 
   try {
+    // Fetch all data once, then filter by period if needed
+    const allRows = await fetchAllRows(supabase, cfg.table);
+    const rows = filterByPeriod(allRows, cfg, month, year);
+    const periodLabel = month && year ? ` for ${month}/${year}` : year ? ` for ${year}` : "";
+
+    const parseRow = (row: any) => ({
+      id: row.id,
+      draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
+      main_numbers: parseNums(row[cfg.mainCol]),
+      bonus: parseNums(row[cfg.bonusCol]),
+    });
+
     switch (query_type) {
       case "recent_draws": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 100));
-        if (error) return `Error: ${error.message}`;
-        const parsed = (data || []).map((row: any) => ({
-          id: row.id,
-          draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
-          main_numbers: parseNums(row[cfg.mainCol]),
-          bonus: parseNums(row[cfg.bonusCol]),
-        }));
-        return JSON.stringify({ lottery: lottery_name, count: parsed.length, draws: parsed });
+        const limited = rows.slice(0, Math.min(limit, 100));
+        return JSON.stringify({ lottery: lottery_name, period: periodLabel, count: limited.length, draws: limited.map(parseRow) });
       }
 
       case "frequency_analysis": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 500));
-        if (error) return `Error: ${error.message}`;
-
+        const limited = rows.slice(0, Math.min(rows.length, 1000));
         const freq: Record<number, number> = {};
         const bonusFreq: Record<number, number> = {};
-        for (const row of data || []) {
+        for (const row of limited) {
           for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
           for (const n of parseNums(row[cfg.bonusCol])) bonusFreq[n] = (bonusFreq[n] || 0) + 1;
         }
         const sorted = Object.entries(freq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count);
         const bonusSorted = Object.entries(bonusFreq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count);
-
         return JSON.stringify({
-          lottery: lottery_name,
-          draws_analysed: (data || []).length,
-          top_main: sorted.slice(0, 20),
-          top_bonus: bonusSorted.slice(0, 10),
-          least_drawn: sorted.slice(-10).reverse(),
+          lottery: lottery_name, period: periodLabel, draws_analysed: limited.length,
+          top_main: sorted.slice(0, 20), top_bonus: bonusSorted.slice(0, 10), least_drawn: sorted.slice(-10).reverse(),
         });
       }
 
       case "top_numbers": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 500));
-        if (error) return `Error: ${error.message}`;
-
         const freq: Record<number, number> = {};
-        for (const row of data || [])
-          for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
-
+        for (const row of rows) for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
         const pairs: Record<string, number> = {};
-        for (const row of data || []) {
+        for (const row of rows) {
           const nums = parseNums(row[cfg.mainCol]).sort((a, b) => a - b);
           for (let i = 0; i < nums.length; i++)
             for (let j = i + 1; j < nums.length; j++) {
@@ -365,10 +346,8 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
               pairs[key] = (pairs[key] || 0) + 1;
             }
         }
-
         return JSON.stringify({
-          lottery: lottery_name,
-          draws_analysed: (data || []).length,
+          lottery: lottery_name, period: periodLabel, draws_analysed: rows.length,
           top_20: Object.entries(freq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count).slice(0, 20),
           top_pairs: Object.entries(pairs).map(([k, c]) => ({ pair: k, count: c })).sort((a, b) => b.count - a.count).slice(0, 15),
         });
@@ -376,39 +355,20 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
 
       case "check_combination": {
         if (!numbers || numbers.length === 0) return "No numbers provided.";
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 500));
-        if (error) return `Error: ${error.message}`;
-
         const freq: Record<number, number> = {};
         for (const n of numbers) freq[n] = 0;
         let exactMatch = false;
-        for (const row of data || []) {
+        for (const row of rows) {
           const mainNums = parseNums(row[cfg.mainCol]);
           for (const n of numbers) if (mainNums.includes(n)) freq[n]++;
           if (JSON.stringify([...mainNums].sort((a, b) => a - b)) === JSON.stringify([...numbers].sort((a, b) => a - b))) exactMatch = true;
         }
-
-        return JSON.stringify({ lottery: lottery_name, draws_analysed: (data || []).length, number_frequencies: freq, exact_combination_found: exactMatch });
+        return JSON.stringify({ lottery: lottery_name, period: periodLabel, draws_analysed: rows.length, number_frequencies: freq, exact_combination_found: exactMatch });
       }
 
       case "draws_by_date_range": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(100);
-        if (error) return `Error: ${error.message}`;
-        const parsed = (data || []).map((row: any) => ({
-          id: row.id,
-          draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
-          main_numbers: parseNums(row[cfg.mainCol]),
-          bonus: parseNums(row[cfg.bonusCol]),
-        }));
-        return JSON.stringify({ lottery: lottery_name, draws: parsed });
+        const limited = rows.slice(0, 100);
+        return JSON.stringify({ lottery: lottery_name, period: periodLabel, count: limited.length, draws: limited.map(parseRow) });
       }
 
       default:
