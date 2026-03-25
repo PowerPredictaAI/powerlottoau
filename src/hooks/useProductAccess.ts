@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { externalSupabase } from "@/lib/externalSupabase";
+import { supabase } from "@/integrations/supabase/client";
 import { normalizeEmail, PRODUCT_ACCESS_REFRESH_EVENT } from "@/lib/accessControl";
 
 interface ProductAccessState {
