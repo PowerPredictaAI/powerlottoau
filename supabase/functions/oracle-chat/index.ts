@@ -172,7 +172,7 @@ const TOOLS = [
     function: {
       name: "query_lottery_db",
       description:
-        "Query the lottery_draws database. Use for frequency analysis, recent draws, pattern checks, or looking up specific draws. Returns up to 100 rows.",
+        "Query the powerball_database table. Use for frequency analysis, recent draws, pattern checks, or looking up specific draws. Returns up to 100 rows.",
       parameters: {
         type: "object",
         properties: {
