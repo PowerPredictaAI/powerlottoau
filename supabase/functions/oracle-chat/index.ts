@@ -187,6 +187,31 @@ function parseNums(text: string | null): number[] {
   return text.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
 }
 
+// Month name mapping
+const MONTH_MAP: Record<string, number> = {
+  january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+  july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
+};
+
+// Parse text date from DB into { month, year } for filtering
+// Formats: "21/03/2026" (powerball, saturdaylotto) or "17 March" + Year col "2026" (ozlotto)
+function parseDateText(dateStr: string, yearStr?: string | null): { month: number; year: number } | null {
+  if (!dateStr) return null;
+  // Try dd/mm/yyyy
+  const slashMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashMatch) return { month: parseInt(slashMatch[2]), year: parseInt(slashMatch[3]) };
+  // Try yyyy-mm-dd
+  const isoMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) return { month: parseInt(isoMatch[2]), year: parseInt(isoMatch[1]) };
+  // Try "17 March" + year column
+  const textMatch = dateStr.match(/^\d+\s+(\w+)/);
+  if (textMatch && yearStr) {
+    const m = MONTH_MAP[textMatch[1].toLowerCase()];
+    if (m) return { month: m, year: parseInt(yearStr) };
+  }
+  return null;
+}
+
 // ── Tool definition ──
 const TOOLS = [
   {
@@ -194,7 +219,7 @@ const TOOLS = [
     function: {
       name: "query_lottery_db",
       description:
-        "Query lottery draw history from the database. Each lottery has its own table. Returns parsed draw results with main numbers and bonus/powerball numbers.",
+        "Query lottery draw history from the database. Each lottery has its own table. Returns parsed draw results with main numbers and bonus/powerball numbers. Use month+year params to filter by specific period.",
       parameters: {
         type: "object",
         properties: {
@@ -216,12 +241,20 @@ const TOOLS = [
           },
           limit: {
             type: "number",
-            description: "Number of draws to fetch (default 52, max 500)",
+            description: "Number of draws to fetch (default 52, max 1000)",
           },
           numbers: {
             type: "array",
             items: { type: "number" },
             description: "Numbers to check (for check_combination)",
+          },
+          month: {
+            type: "number",
+            description: "Month number (1-12) to filter draws. Use with year.",
+          },
+          year: {
+            type: "number",
+            description: "Year (e.g. 2024, 2025, 2026) to filter draws. Use with month.",
           },
         },
         required: ["lottery_name", "query_type"],
@@ -230,69 +263,82 @@ const TOOLS = [
   },
 ];
 
-// ── Execute DB query ──
+// Helper: fetch all rows from a table (bypasses 1000 limit)
+async function fetchAllRows(supabase: any, table: string): Promise<any[]> {
+  const rows: any[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from(table)
+      .select("*")
+      .order("id", { ascending: true })
+      .range(from, from + pageSize - 1);
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0) break;
+    rows.push(...data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+  return rows;
+}
+
+// Filter rows by month/year using text date parsing
+function filterByPeriod(rows: any[], cfg: any, month?: number, year?: number): any[] {
+  if (!month && !year) return rows;
+  return rows.filter((row: any) => {
+    const parsed = parseDateText(row[cfg.dateCol], cfg.yearCol ? row[cfg.yearCol] : null);
+    if (!parsed) return false;
+    if (month && parsed.month !== month) return false;
+    if (year && parsed.year !== year) return false;
+    return true;
+  });
+}
+
 async function executeDbQuery(supabase: any, args: any): Promise<string> {
-  const { lottery_name, query_type, limit = 52, numbers } = args;
+  const { lottery_name, query_type, limit = 52, numbers, month, year } = args;
   const cfg = getLotteryConfig(lottery_name);
 
   try {
+    // Fetch all data once, then filter by period if needed
+    const allRows = await fetchAllRows(supabase, cfg.table);
+    const rows = filterByPeriod(allRows, cfg, month, year);
+    const periodLabel = month && year ? ` for ${month}/${year}` : year ? ` for ${year}` : "";
+
+    const parseRow = (row: any) => ({
+      id: row.id,
+      draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
+      main_numbers: parseNums(row[cfg.mainCol]),
+      bonus: parseNums(row[cfg.bonusCol]),
+    });
+
     switch (query_type) {
       case "recent_draws": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 100));
-        if (error) return `Error: ${error.message}`;
-        const parsed = (data || []).map((row: any) => ({
-          id: row.id,
-          draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
-          main_numbers: parseNums(row[cfg.mainCol]),
-          bonus: parseNums(row[cfg.bonusCol]),
-        }));
-        return JSON.stringify({ lottery: lottery_name, count: parsed.length, draws: parsed });
+        const limited = rows.slice(0, Math.min(limit, 100));
+        return JSON.stringify({ lottery: lottery_name, period: periodLabel, count: limited.length, draws: limited.map(parseRow) });
       }
 
       case "frequency_analysis": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 500));
-        if (error) return `Error: ${error.message}`;
-
+        const limited = rows.slice(0, Math.min(rows.length, 1000));
         const freq: Record<number, number> = {};
         const bonusFreq: Record<number, number> = {};
-        for (const row of data || []) {
+        for (const row of limited) {
           for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
           for (const n of parseNums(row[cfg.bonusCol])) bonusFreq[n] = (bonusFreq[n] || 0) + 1;
         }
         const sorted = Object.entries(freq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count);
         const bonusSorted = Object.entries(bonusFreq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count);
-
         return JSON.stringify({
-          lottery: lottery_name,
-          draws_analysed: (data || []).length,
-          top_main: sorted.slice(0, 20),
-          top_bonus: bonusSorted.slice(0, 10),
-          least_drawn: sorted.slice(-10).reverse(),
+          lottery: lottery_name, period: periodLabel, draws_analysed: limited.length,
+          top_main: sorted.slice(0, 20), top_bonus: bonusSorted.slice(0, 10), least_drawn: sorted.slice(-10).reverse(),
         });
       }
 
       case "top_numbers": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 500));
-        if (error) return `Error: ${error.message}`;
-
         const freq: Record<number, number> = {};
-        for (const row of data || [])
-          for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
-
+        for (const row of rows) for (const n of parseNums(row[cfg.mainCol])) freq[n] = (freq[n] || 0) + 1;
         const pairs: Record<string, number> = {};
-        for (const row of data || []) {
+        for (const row of rows) {
           const nums = parseNums(row[cfg.mainCol]).sort((a, b) => a - b);
           for (let i = 0; i < nums.length; i++)
             for (let j = i + 1; j < nums.length; j++) {
@@ -300,10 +346,8 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
               pairs[key] = (pairs[key] || 0) + 1;
             }
         }
-
         return JSON.stringify({
-          lottery: lottery_name,
-          draws_analysed: (data || []).length,
+          lottery: lottery_name, period: periodLabel, draws_analysed: rows.length,
           top_20: Object.entries(freq).map(([n, c]) => ({ number: +n, count: c })).sort((a, b) => b.count - a.count).slice(0, 20),
           top_pairs: Object.entries(pairs).map(([k, c]) => ({ pair: k, count: c })).sort((a, b) => b.count - a.count).slice(0, 15),
         });
@@ -311,39 +355,20 @@ async function executeDbQuery(supabase: any, args: any): Promise<string> {
 
       case "check_combination": {
         if (!numbers || numbers.length === 0) return "No numbers provided.";
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(Math.min(limit, 500));
-        if (error) return `Error: ${error.message}`;
-
         const freq: Record<number, number> = {};
         for (const n of numbers) freq[n] = 0;
         let exactMatch = false;
-        for (const row of data || []) {
+        for (const row of rows) {
           const mainNums = parseNums(row[cfg.mainCol]);
           for (const n of numbers) if (mainNums.includes(n)) freq[n]++;
           if (JSON.stringify([...mainNums].sort((a, b) => a - b)) === JSON.stringify([...numbers].sort((a, b) => a - b))) exactMatch = true;
         }
-
-        return JSON.stringify({ lottery: lottery_name, draws_analysed: (data || []).length, number_frequencies: freq, exact_combination_found: exactMatch });
+        return JSON.stringify({ lottery: lottery_name, period: periodLabel, draws_analysed: rows.length, number_frequencies: freq, exact_combination_found: exactMatch });
       }
 
       case "draws_by_date_range": {
-        const { data, error } = await supabase
-          .from(cfg.table)
-          .select("*")
-          .order("id", { ascending: true })
-          .limit(100);
-        if (error) return `Error: ${error.message}`;
-        const parsed = (data || []).map((row: any) => ({
-          id: row.id,
-          draw_date: row[cfg.dateCol] + (cfg.yearCol && row[cfg.yearCol] ? ` ${row[cfg.yearCol]}` : ""),
-          main_numbers: parseNums(row[cfg.mainCol]),
-          bonus: parseNums(row[cfg.bonusCol]),
-        }));
-        return JSON.stringify({ lottery: lottery_name, draws: parsed });
+        const limited = rows.slice(0, 100);
+        return JSON.stringify({ lottery: lottery_name, period: periodLabel, count: limited.length, draws: limited.map(parseRow) });
       }
 
       default:
