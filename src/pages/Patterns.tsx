@@ -351,11 +351,11 @@ const Patterns = () => {
                 <div className="h-[300px] sm:h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={winnersByYear} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                      <XAxis dataKey="year" tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 11 }} />
-                      <YAxis tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 12 }} />
-                      <Tooltip
-                        contentStyle={{ background: "hsl(220,20%,12%)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#fff" }}
+                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                       <XAxis dataKey="year" tick={{ fill: "#374151", fontSize: 11 }} />
+                       <YAxis tick={{ fill: "#374151", fontSize: 12 }} />
+                       <Tooltip
+                         contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, color: "#111" }}
                         formatter={(value: number) => [value.toLocaleString(), "Winners"]}
                       />
                       <Bar dataKey="winners" fill={config.barColor} radius={[4, 4, 0, 0]} opacity={0.85} />
