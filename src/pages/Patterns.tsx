@@ -221,11 +221,11 @@ const Patterns = () => {
             <>
               {/* Period Filter */}
               <Card className="glass-panel dark:glass-panel glass-panel-light p-5 sm:p-6 mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Filter className="h-5 w-5" style={{ color: config.accentColor }} />
-                  <h2 className="font-display font-bold text-lg text-white">Filter by Time Period</h2>
-                </div>
-                <p className="text-sm text-white/50 mb-4">Analyse patterns from specific years or view all data</p>
+                 <div className="flex items-center gap-2 mb-3">
+                   <Filter className="h-5 w-5" style={{ color: config.accentColor }} />
+                   <h2 className="font-display font-bold text-lg text-foreground">Filter by Time Period</h2>
+                 </div>
+                 <p className="text-sm text-muted-foreground mb-4">Analyse patterns from specific years or view all data</p>
 
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-[140px]">
