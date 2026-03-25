@@ -248,7 +248,7 @@ async function executeDbQuery(
 
       case "frequency_analysis": {
         let q = supabase
-          .from("lottery_draws")
+          .from("powerball_database")
           .select("main_numbers, bonus_numbers")
           .eq("lottery_name", lottery_name)
           .order("draw_date", { ascending: false })
