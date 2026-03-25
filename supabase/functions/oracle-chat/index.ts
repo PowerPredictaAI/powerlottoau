@@ -19,7 +19,7 @@ Help the user:
 ========================
 DATABASE INTEGRATION (MANDATORY)
 ========================
-You have access to the lottery_draws database via a tool called "query_lottery_db".
+You have access to the powerball_database table via a tool called "query_lottery_db".
 Use it AUTOMATICALLY whenever:
 - User asks about specific draw dates or results
 - User asks for hot/cold numbers or frequency
