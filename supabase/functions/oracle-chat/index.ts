@@ -356,7 +356,7 @@ async function executeDbQuery(
 
       case "draws_by_date_range": {
         let q = supabase
-          .from("lottery_draws")
+          .from("powerball_database")
           .select("draw_number, draw_date, main_numbers, bonus_numbers, total_winners")
           .eq("lottery_name", lottery_name)
           .order("draw_date", { ascending: false })
