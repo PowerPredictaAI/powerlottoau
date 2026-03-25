@@ -19,7 +19,7 @@ Help the user:
 ========================
 DATABASE INTEGRATION (MANDATORY)
 ========================
-You have access to the lottery_draws database via a tool called "query_lottery_db".
+You have access to the powerball_database table via a tool called "query_lottery_db".
 Use it AUTOMATICALLY whenever:
 - User asks about specific draw dates or results
 - User asks for hot/cold numbers or frequency
@@ -172,7 +172,7 @@ const TOOLS = [
     function: {
       name: "query_lottery_db",
       description:
-        "Query the lottery_draws database. Use for frequency analysis, recent draws, pattern checks, or looking up specific draws. Returns up to 100 rows.",
+        "Query the powerball_database table. Use for frequency analysis, recent draws, pattern checks, or looking up specific draws. Returns up to 100 rows.",
       parameters: {
         type: "object",
         properties: {
@@ -234,7 +234,7 @@ async function executeDbQuery(
     switch (query_type) {
       case "recent_draws": {
         let q = supabase
-          .from("lottery_draws")
+          .from("powerball_database")
           .select("draw_number, draw_date, main_numbers, bonus_numbers, total_winners")
           .eq("lottery_name", lottery_name)
           .order("draw_date", { ascending: false })
@@ -248,7 +248,7 @@ async function executeDbQuery(
 
       case "frequency_analysis": {
         let q = supabase
-          .from("lottery_draws")
+          .from("powerball_database")
           .select("main_numbers, bonus_numbers")
           .eq("lottery_name", lottery_name)
           .order("draw_date", { ascending: false })
@@ -281,7 +281,7 @@ async function executeDbQuery(
 
       case "top_numbers": {
         let q = supabase
-          .from("lottery_draws")
+          .from("powerball_database")
           .select("main_numbers, bonus_numbers")
           .eq("lottery_name", lottery_name)
           .order("draw_date", { ascending: false })
@@ -323,7 +323,7 @@ async function executeDbQuery(
         if (!numbers || numbers.length === 0)
           return "No numbers provided to check.";
         let q = supabase
-          .from("lottery_draws")
+          .from("powerball_database")
           .select("draw_number, draw_date, main_numbers, bonus_numbers")
           .eq("lottery_name", lottery_name)
           .order("draw_date", { ascending: false })
@@ -356,7 +356,7 @@ async function executeDbQuery(
 
       case "draws_by_date_range": {
         let q = supabase
-          .from("lottery_draws")
+          .from("powerball_database")
           .select("draw_number, draw_date, main_numbers, bonus_numbers, total_winners")
           .eq("lottery_name", lottery_name)
           .order("draw_date", { ascending: false })
@@ -386,9 +386,10 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const supabase = createClient(supabaseUrl!, supabaseKey!);
+    // Use external Supabase for DB queries (powerball_database table)
+    const extUrl = "https://vygtkmmkfrfrclfnljop.supabase.co";
+    const extKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5Z3RrbW1rZnJmcmNsZm5sam9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNzA1OTUsImV4cCI6MjA4OTg0NjU5NX0.hPI6Yppz-CybKsXTEfUElxxmojyPKJ4ujy6msK9zLBE";
+    const supabase = createClient(extUrl, extKey);
 
     // Build system message with page context
     let systemContent = SYSTEM_PROMPT;
