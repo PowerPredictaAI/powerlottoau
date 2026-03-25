@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
-import { externalSupabase } from "@/lib/externalSupabase";
 import { normalizeEmail, PRODUCT_ACCESS_REFRESH_EVENT } from "@/lib/accessControl";
+
+const CHECK_ACCESS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/check-access`;
 
 interface ProductAccessState {
   isUnlocked: boolean;
@@ -31,43 +32,21 @@ export function useProductAccess(productSlug: string, options?: UseProductAccess
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const [{ data: profile, error: profileError }, { data: product, error: productError }] = await Promise.all([
-        externalSupabase
-          .from("profiles")
-          .select("id")
-          .ilike("email", email)
-          .limit(1)
-          .maybeSingle(),
-        externalSupabase
-          .from("products")
-          .select("id")
-          .eq("slug", productSlug)
-          .eq("is_active", true)
-          .maybeSingle(),
-      ]);
+      const resp = await fetch(CHECK_ACCESS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ email, product_slug: productSlug }),
+      });
 
-      if (profileError) throw profileError;
-      if (productError) throw productError;
+      if (!resp.ok) throw new Error("Access check request failed");
 
-      if (!profile || !product) {
-        setState({ isUnlocked: false, isLoading: false, error: null });
-        return;
-      }
-
-      const now = new Date().toISOString();
-      const { data: entitlement, error: entitlementError } = await externalSupabase
-        .from("entitlements")
-        .select("id")
-        .eq("user_id", profile.id)
-        .eq("product_id", product.id)
-        .eq("status", "active")
-        .or(`expires_at.is.null,expires_at.gt.${now}`)
-        .maybeSingle();
-
-      if (entitlementError) throw entitlementError;
+      const result = await resp.json();
 
       setState({
-        isUnlocked: !!entitlement,
+        isUnlocked: result.has_access === true,
         isLoading: false,
         error: null,
       });
