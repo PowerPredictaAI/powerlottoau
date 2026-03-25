@@ -242,7 +242,7 @@ const Patterns = () => {
                   <span className="text-muted-foreground font-medium pt-5">to</span>
 
                   <div className="flex-1 min-w-[140px]">
-                    <label className="text-xs text-white/60 mb-1 block">End Year</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">End Year</label>
                     <Select value={endYear} onValueChange={setEndYear}>
                       <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
                       <SelectContent>
