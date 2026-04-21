@@ -6,6 +6,7 @@ import EbookCard from "@/components/EbookCard";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
+import WelcomePromoPopup from "@/components/WelcomePromoPopup";
 import Footer from "@/components/Footer";
 import bgImage from "@/assets/money-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
