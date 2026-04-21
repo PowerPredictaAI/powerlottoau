@@ -289,6 +289,9 @@ const SelectLottery = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Welcome Promo Popup (shown once after first login) */}
+      <WelcomePromoPopup />
+
       {/* Background Image */}
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${bgImage})` }} />
       {/* Dark Overlay */}
