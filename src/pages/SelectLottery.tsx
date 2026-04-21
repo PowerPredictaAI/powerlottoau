@@ -6,6 +6,7 @@ import EbookCard from "@/components/EbookCard";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import SmartTipsPopup from "@/components/SmartTipsPopup";
+import WelcomePromoPopup from "@/components/WelcomePromoPopup";
 import Footer from "@/components/Footer";
 import bgImage from "@/assets/money-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
@@ -288,6 +289,9 @@ const SelectLottery = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Welcome Promo Popup (shown once after first login) */}
+      <WelcomePromoPopup />
+
       {/* Background Image */}
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${bgImage})` }} />
       {/* Dark Overlay */}
