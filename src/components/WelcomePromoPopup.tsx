@@ -6,8 +6,8 @@ import { Sparkles, BookOpen, ArrowRight, Check, Zap, Brain, Target, TrendingUp, 
 import oracleMascot from "@/assets/oracle-ai-mascot.png";
 import ebookCover from "@/assets/ebook-cover.jpg";
 
-const ORACLE_STRIPE_URL = "https://buy.stripe.com/bJe4gB3xgcfY2xPb5I1Fe02";
-const EBOOK_STRIPE_URL = "https://buy.stripe.com/3cIfZj7Nwgweegx5Lo1Fe03";
+const ORACLE_STRIPE_URL = "https://buy.stripe.com/dRmaEQ8Ox0nycamfRSbEA02";
+const EBOOK_STRIPE_URL = "https://buy.stripe.com/fZu28k5Clfis1vI356bEA03";
 const STORAGE_KEY = "welcomePromoSeen";
 
 const WelcomePromoPopup = () => {
