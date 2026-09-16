@@ -43,6 +43,7 @@ const Login = () => {
 
     if (normalizedEmail && validateEmail(normalizedEmail)) {
       localStorage.setItem("userEmail", normalizedEmail);
+      sessionStorage.setItem("showWelcomePromo", "true");
       window.dispatchEvent(new Event(PRODUCT_ACCESS_REFRESH_EVENT));
       navigate("/select-lottery");
     }

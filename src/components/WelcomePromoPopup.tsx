@@ -8,23 +8,22 @@ import ebookCover from "@/assets/ebook-cover.jpg";
 
 const ORACLE_STRIPE_URL = "https://buy.stripe.com/dRmaEQ8Ox0nycamfRSbEA02";
 const EBOOK_STRIPE_URL = "https://buy.stripe.com/fZu28k5Clfis1vI356bEA03";
-const STORAGE_KEY = "welcomePromoSeen";
+const PROMO_LOGIN_KEY = "showWelcomePromo";
 
 const WelcomePromoPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
 
   useEffect(() => {
-    const seen = localStorage.getItem(STORAGE_KEY);
-    if (!seen) {
-      // Pequeno delay para suavizar a entrada após o login
+    const shouldShow = sessionStorage.getItem(PROMO_LOGIN_KEY) === "true";
+    if (shouldShow) {
+      sessionStorage.removeItem(PROMO_LOGIN_KEY);
       const timer = setTimeout(() => setIsOpen(true), 600);
       return () => clearTimeout(timer);
     }
   }, []);
 
   const handleClose = () => {
-    localStorage.setItem(STORAGE_KEY, "true");
     setIsOpen(false);
   };
 
