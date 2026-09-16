@@ -150,11 +150,11 @@ const Database = () => {
         const csvRecords = parseCsv(text, lotteryType);
         let combinedRecords = csvRecords;
 
-        if (lotteryType === "powerball") {
+        if (lotteryType === "powerball" || lotteryType === "saturday-lotto") {
           const { data, error } = await supabase
             .from("lottery_draws")
             .select("draw_number, draw_date, main_numbers, bonus_numbers, total_winners")
-            .ilike("lottery_name", "powerball")
+            .ilike("lottery_name", lotteryType)
             .order("draw_number", { ascending: false });
 
           if (error) throw error;
