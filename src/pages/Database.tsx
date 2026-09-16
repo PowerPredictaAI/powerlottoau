@@ -150,7 +150,7 @@ const Database = () => {
         const csvRecords = parseCsv(text, lotteryType);
         let combinedRecords = csvRecords;
 
-        if (lotteryType === "powerball") {
+        if (lotteryType === "powerball" || lotteryType === "saturday-lotto") {
           const { data, error } = await supabase
             .from("lottery_draws")
             .select("draw_number, draw_date, main_numbers, bonus_numbers, total_winners")
