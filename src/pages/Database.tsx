@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import bgImage from "@/assets/money-bg.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DrawRecord {
   drawNumber: string;
@@ -115,6 +116,18 @@ const parseCsv = (text: string, lottery: LotteryType): DrawRecord[] => {
     .sort((a, b) => parseInt(b.drawNumber) - parseInt(a.drawNumber));
 };
 
+const formatDrawDate = (date: string) => {
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return date;
+
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString("en-AU", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 const Database = () => {
   const navigate = useNavigate();
   const [records, setRecords] = useState<DrawRecord[]>([]);
@@ -134,9 +147,35 @@ const Database = () => {
       try {
         const response = await fetch(config.csvFile);
         const text = await response.text();
-        const parsed = parseCsv(text, lotteryType);
-        setRecords(parsed);
-        setFilteredRecords(parsed);
+        const csvRecords = parseCsv(text, lotteryType);
+        let combinedRecords = csvRecords;
+
+        if (lotteryType === "powerball") {
+          const { data, error } = await supabase
+            .from("lottery_draws")
+            .select("draw_number, draw_date, main_numbers, bonus_numbers, total_winners")
+            .ilike("lottery_name", "powerball")
+            .order("draw_number", { ascending: false });
+
+          if (error) throw error;
+
+          const databaseRecords: DrawRecord[] = (data ?? []).map((draw) => ({
+            drawNumber: String(draw.draw_number),
+            date: formatDrawDate(draw.draw_date),
+            numbers: draw.main_numbers.join(" "),
+            bonus: (draw.bonus_numbers ?? []).join(" "),
+            totalWinners: draw.total_winners ?? "0",
+          }));
+
+          const recordsByDraw = new Map(csvRecords.map((record) => [record.drawNumber, record]));
+          databaseRecords.forEach((record) => recordsByDraw.set(record.drawNumber, record));
+          combinedRecords = Array.from(recordsByDraw.values()).sort(
+            (a, b) => parseInt(b.drawNumber) - parseInt(a.drawNumber)
+          );
+        }
+
+        setRecords(combinedRecords);
+        setFilteredRecords(combinedRecords);
       } catch (error) {
         console.error("Error loading database:", error);
       }
